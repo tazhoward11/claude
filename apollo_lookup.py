@@ -388,7 +388,17 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
                             # alone would let that coincidence "confirm" a format for the wrong
                             # domain. Only count it confirmed once the SAME domain backs the
                             # SAME format twice.
-                            if not fmt.startswith("other") and fmt != "unknown":
+                            #
+                            # Exception: if a domain was explicitly pinned (--company-domains),
+                            # that's a stronger signal than a vote count - Apollo's own domain
+                            # filter isn't airtight (an "Operating Partner" can still surface
+                            # tied to an affiliated portfolio company's domain despite the pin),
+                            # so a vote for any OTHER domain shouldn't be allowed to manufacture
+                            # a false tie against the domain the user already told us is correct.
+                            if domain_pin and domain != domain_pin:
+                                row["note"] = (f"verified but domain '{domain}' doesn't match pinned "
+                                               f"'{domain_pin}' - excluded from format voting")
+                            elif not fmt.startswith("other") and fmt != "unknown":
                                 key = (fmt, domain)
                                 format_domain_votes[key] += 1
                                 if format_domain_votes[key] >= min(2, sample_size):
