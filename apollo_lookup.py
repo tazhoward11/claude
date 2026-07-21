@@ -351,6 +351,7 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
         confirmed_domain = None
         confirmed_format = None
         format_votes = Counter()
+        domain_by_format = {}  # fmt -> the domain actually seen with that format
         enriched_count = 0
         person_rows = []  # (person, row) so free-name people can be filled in after format is confirmed
 
@@ -379,7 +380,13 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
                             local, domain = m.groups()
                             fmt = guess_format(local, enriched.get("first_name"), enriched.get("last_name"))
                             row["guessed_format"] = fmt
-                            confirmed_domain = domain
+                            # Don't blindly overwrite confirmed_domain here - a company can
+                            # have enrichments land on two different real domains (e.g. an
+                            # "Operating Partner" whose Apollo profile is tied to a portfolio
+                            # company's domain instead of the fund's). Track per-format so the
+                            # domain we end up trusting is the one actually tied to whichever
+                            # format gets confirmed, not just whichever enrichment ran last.
+                            domain_by_format[fmt] = domain
                             if not fmt.startswith("other") and fmt != "unknown":
                                 format_votes[fmt] += 1
                                 if format_votes[fmt] >= min(2, sample_size):
@@ -397,6 +404,8 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
 
         if not confirmed_format and format_votes:
             confirmed_format = format_votes.most_common(1)[0][0]
+        if confirmed_format:
+            confirmed_domain = domain_by_format.get(confirmed_format)
 
         status = (f"format confirmed: {confirmed_format} @ {confirmed_domain}"
                   if confirmed_format else "could not confirm a format from sample")
