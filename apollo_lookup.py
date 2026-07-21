@@ -136,6 +136,56 @@ def infer_company_format(rows: list[dict]) -> str:
     return f"{fmt} (seen in {count}/{sum(votes.values())} verified emails)"
 
 
+MASK_RE = re.compile(r"^([^*]*)\*+([^*]*)$")
+
+
+def mask_matches(candidate_last: str, masked: str) -> bool:
+    """Check a candidate last name against Apollo's obfuscated form, e.g. 'Mu***l'.
+    Note: the star count is fixed-width and does NOT encode the real name's length
+    (a 4-letter and a 9-letter last name both mask to e.g. 'Xx***x') so length can't
+    be used as a signal - only the prefix/suffix around the stars."""
+    m = MASK_RE.match(masked or "")
+    if not m:
+        return candidate_last.strip().lower() == (masked or "").strip().lower()
+    prefix, suffix = m.group(1).lower(), m.group(2).lower()
+    cl = candidate_last.strip().lower()
+    if len(cl) < len(prefix) + len(suffix):
+        return False
+    return cl.startswith(prefix) and cl.endswith(suffix)
+
+
+def title_similarity(a: str, b: str) -> float:
+    """Word-overlap similarity between two job titles, 0-1. Used only to break ties
+    when multiple people share a first name + last-name mask at the same company."""
+    words_a = set(re.findall(r"[a-z]+", (a or "").lower()))
+    words_b = set(re.findall(r"[a-z]+", (b or "").lower()))
+    if not words_a or not words_b:
+        return 0.0
+    return len(words_a & words_b) / len(words_a | words_b)
+
+
+def resolve_candidate(candidate: dict, apollo_people: list[dict]) -> tuple[dict | None, str]:
+    """Match a (first, last, title) candidate sourced from outside Apollo (e.g. a
+    company team page) against this company's actual obfuscated search results.
+    Returns (matched_apollo_person_or_None, reason). Refuses to guess between two
+    real people who both fit the same first-name + mask (e.g. Joe Johnson vs.
+    Joe Johnston both match 'Jo***n') unless title breaks the tie clearly."""
+    first, last, title = candidate["first"], candidate["last"], candidate.get("title", "")
+    hits = [p for p in apollo_people
+            if (p.get("first_name") or "").strip().lower() == first.strip().lower()
+            and mask_matches(last, p.get("last_name_obfuscated") or "")]
+    if not hits:
+        return None, "no Apollo record matches this name/mask at this company - not cross-validated"
+    if len(hits) == 1:
+        return hits[0], "unique match on first name + last-name mask"
+    scored = sorted(((title_similarity(title, h.get("title") or ""), h) for h in hits),
+                     key=lambda x: x[0], reverse=True)
+    if len(scored) >= 2 and scored[0][0] - scored[1][0] >= 0.3 and scored[0][0] > 0:
+        return scored[0][1], f"ambiguous ({len(hits)} people share this name+mask); resolved by title match"
+    names = ", ".join(f"{h.get('first_name')} {h.get('last_name_obfuscated')} ({h.get('title')})" for h in hits)
+    return None, f"AMBIGUOUS - {len(hits)} different people match ({names}); title didn't disambiguate, skipped"
+
+
 def apply_known_format(first: str, last: str, domain: str, fmt: str) -> str | None:
     """Build a predicted email for a known full name using an already-confirmed format."""
     f, l = (first or "").strip().lower(), (last or "").strip().lower()
@@ -153,13 +203,16 @@ def apply_known_format(first: str, last: str, domain: str, fmt: str) -> str | No
 def run(companies: list[str], titles: list[str], locations: list[str], api_key: str,
         enrich: bool, out_path: str, max_pages: int, sample_size: int, known_names_path: str | None):
     all_rows = []
-    known_names = defaultdict(list)  # company -> [(first, last), ...] supplied by the user
+    known_names = defaultdict(list)  # company -> [{"first", "last", "title"}, ...] supplied by the user
     if known_names_path:
-        with open(known_names_path) as f:
-            for line in f:
-                parts = [x.strip() for x in line.strip().split(",")]
-                if len(parts) == 3:
-                    known_names[parts[0]].append((parts[1], parts[2]))
+        with open(known_names_path, newline="") as f:
+            for parts in csv.reader(f):
+                parts = [p.strip() for p in parts]
+                if len(parts) >= 3:
+                    known_names[parts[0]].append({
+                        "first": parts[1], "last": parts[2],
+                        "title": parts[3] if len(parts) > 3 else "",
+                    })
 
     for company in companies:
         print(f"Searching: {company}")
@@ -210,16 +263,30 @@ def run(companies: list[str], titles: list[str], locations: list[str], api_key: 
                   if confirmed_format else "could not confirm a format from sample")
         print(f"  {status} (spent {enriched_count} enrichment credit(s) on this company)")
 
-        # Apply the confirmed format to any full names you already know, for free.
+        # Apply the confirmed format to any full names you already know, for free -
+        # but only after cross-validating each one against Apollo's own obfuscated
+        # records for this company, so lookalike names (Johnson vs. Johnston) can't
+        # get silently mismatched to the wrong person.
         if confirmed_format and confirmed_domain:
-            for first, last in known_names.get(company, []):
-                predicted = apply_known_format(first, last, confirmed_domain, confirmed_format)
-                all_rows.append({
-                    "company": company, "matched_as": matched_as, "name": f"{first} {last}",
-                    "title": "", "linkedin_url": "", "email": predicted or "",
-                    "email_status": "predicted (not verified)", "guessed_format": confirmed_format,
-                    "note": "from --known-names, no credit spent",
-                })
+            for candidate in known_names.get(company, []):
+                matched_person, reason = resolve_candidate(candidate, people)
+                row = {
+                    "company": company, "matched_as": matched_as,
+                    "name": f"{candidate['first']} {candidate['last']}",
+                    "title": candidate.get("title", ""), "linkedin_url": "",
+                    "email": "", "email_status": "", "guessed_format": "",
+                }
+                if matched_person is None:
+                    row["email_status"] = "skipped"
+                    row["note"] = reason
+                else:
+                    predicted = apply_known_format(candidate["first"], candidate["last"],
+                                                    confirmed_domain, confirmed_format)
+                    row["email"] = predicted or ""
+                    row["email_status"] = "predicted (not verified)"
+                    row["guessed_format"] = confirmed_format
+                    row["note"] = f"from --known-names, no credit spent - {reason}"
+                all_rows.append(row)
 
     with open(out_path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=["company", "matched_as", "name", "title", "linkedin_url",
@@ -243,9 +310,12 @@ def main():
     parser.add_argument("--sample-size", type=int, default=2,
                          help="Max people to enrich per company to confirm the email format (default 2). "
                               "Enrichment stops early once the format is confirmed twice.")
-    parser.add_argument("--known-names", help="Path to a CSV (company,first,last) of people you already know the "
-                                               "full name of; their emails get predicted from the confirmed format "
-                                               "for free, no enrichment call")
+    parser.add_argument("--known-names", help="Path to a CSV (company,first,last[,title]) of people you already "
+                                               "know the full name of (e.g. from a company's team page); each is "
+                                               "cross-checked against Apollo's obfuscated search results (first "
+                                               "name + last-name mask, using title to break ties) before an email "
+                                               "is predicted for free. Ambiguous or unmatched names are skipped, "
+                                               "not guessed.")
     parser.add_argument("--out", default="apollo_leads.csv", help="Output CSV path")
     parser.add_argument("--max-pages", type=int, default=4, help="Max pages of search results per company")
     args = parser.parse_args()
