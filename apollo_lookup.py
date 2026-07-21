@@ -69,36 +69,111 @@ def api_headers(api_key: str) -> dict:
     return {"Content-Type": "application/json", "x-api-key": api_key}
 
 
+CORPORATE_STOPWORDS = {
+    "capital", "partners", "group", "llc", "inc", "management", "ventures", "fund",
+    "advisors", "adviser", "advisers", "company", "co", "the", "of", "private", "wealth",
+    "financial", "holdings", "associates", "global", "solutions", "consulting", "strategies",
+}
+
+
+def org_similarity(queried: str, employer_name: str) -> float:
+    """0-1 word-overlap similarity between a queried company name and a person's
+    actual employer name (free in the search response). Used to guard against a
+    fallback candidate that degraded to something generic (e.g. '1st', 'Austin',
+    'Peak', 'Sunny') and matched a wholly unrelated company by accident."""
+    if not employer_name:
+        return 0.0
+    q_words = set(re.findall(r"[a-z0-9]+", queried.lower()))
+    e_words = set(re.findall(r"[a-z0-9]+", employer_name.lower()))
+    q_sig = q_words - CORPORATE_STOPWORDS or q_words
+    e_sig = e_words - CORPORATE_STOPWORDS or e_words
+    if not q_sig or not e_sig:
+        return 0.0
+    return len(q_sig & e_sig) / len(q_sig | e_sig)
+
+
 def search_people_with_fallback(api_key: str, company: str, locations: list[str], max_pages: int,
                                  titles: list[str] | None = None, seniorities: list[str] | None = None,
-                                 include_similar_titles: bool = True) -> tuple[list[dict], str]:
+                                 include_similar_titles: bool = True,
+                                 domain: str | None = None) -> tuple[list[dict], str]:
     """Apollo's org name match isn't fuzzy against extra words (e.g. 'Acme Capital'
     may not match an org listed as just 'Acme'). Retry with trailing words dropped
-    until something matches. Returns (people, name_that_matched)."""
+    until something matches. Returns (people, name_that_matched).
+
+    Danger: dropping enough words can degrade to something dangerously generic
+    ('1st Commercial Credit' -> '1st', 'Sunny River Management' -> 'Sunny',
+    'Peak Rock Capital' -> 'Peak'), and a generic candidate can even collide with
+    a real but unrelated company sharing a word (e.g. 'Barton Creek Equity
+    Partners' vs. the unrelated 'Omni Barton Creek' golf resort - both genuinely
+    contain "Barton Creek"). To guard against this, results are grouped by the
+    person's actual employer name and only people at the SINGLE
+    highest-similarity employer are kept - loosely-related runners-up are
+    dropped rather than merged in, so a coincidental word match can't sneak in
+    alongside the real target.
+
+    If `domain` is given (a company's real domain, already known from elsewhere),
+    fuzzy name matching is skipped entirely and results are keyed off the domain
+    directly - unambiguous, no similarity scoring needed."""
+    if domain:
+        people = search_people(api_key, company, locations, titles=titles, seniorities=seniorities,
+                                include_similar_titles=include_similar_titles, max_pages=max_pages, domain=domain)
+        return people, f"{company} (pinned to {domain})"
+
     words = company.split()
     candidates = [company] + [" ".join(words[:i]) for i in range(len(words) - 1, 0, -1)]
     for candidate in candidates:
         people = search_people(api_key, candidate, locations, titles=titles, seniorities=seniorities,
                                 include_similar_titles=include_similar_titles, max_pages=max_pages)
-        if people:
-            if candidate != company:
-                print(f"  no results for '{company}', falling back to '{candidate}'")
-            return people, candidate
+        if not people:
+            continue
+        by_employer = defaultdict(list)
+        for p in people:
+            employer = (p.get("organization") or {}).get("name") or ""
+            by_employer[employer].append(p)
+        scored = sorted(((org_similarity(company, name), name) for name in by_employer),
+                         key=lambda x: x[0], reverse=True)
+        best_score, best_name = scored[0]
+        second_score = scored[1][0] if len(scored) > 1 else -1.0
+        # Require real confidence: a decent absolute score, AND (if there's more than
+        # one distinct employer in the results) a clear margin over the runner-up.
+        # Some real, unrelated companies genuinely share a word (e.g. "Barton Creek
+        # Equity Partners" vs. the unrelated "Barton Creek Golf Academy" - both
+        # contain "Barton Creek" and neither contains "Equity"), so a tie or
+        # near-tie means the name alone can't distinguish them - refuse to guess
+        # rather than silently pick one at random.
+        if best_score < 0.4 or (len(scored) > 1 and best_score - second_score < 0.15):
+            if best_score > 0:
+                print(f"  '{candidate}' returned {len(scored)} different employer(s), none clearly "
+                      f"'{company}' (best: '{best_name}' @ {best_score:.2f}"
+                      + (f", runner-up: '{scored[1][1]}' @ {second_score:.2f}" if len(scored) > 1 else "")
+                      + ") - ambiguous, rejecting, trying next fallback")
+            continue
+        matched_people = by_employer[best_name]
+        if candidate != company:
+            print(f"  no results for '{company}', falling back to '{candidate}'")
+        dropped = len(people) - len(matched_people)
+        if dropped:
+            print(f"  kept {len(matched_people)} result(s) at employer '{best_name}' "
+                  f"(similarity {best_score:.2f}); dropped {dropped} at other employer(s)")
+        return matched_people, candidate
     return [], company
 
 
 def search_people(api_key: str, company: str, locations: list[str], titles: list[str] | None = None,
                    seniorities: list[str] | None = None, include_similar_titles: bool = True,
-                   per_page: int = 25, max_pages: int = 4) -> list[dict]:
+                   per_page: int = 25, max_pages: int = 4, domain: str | None = None) -> list[dict]:
     results = []
     page = 1
     while page <= max_pages:
         payload = {
-            "q_organization_name": company,
             "person_locations": locations,
             "page": page,
             "per_page": per_page,
         }
+        if domain:
+            payload["q_organization_domains_list"] = [domain]
+        else:
+            payload["q_organization_name"] = company
         if titles:
             payload["person_titles"] = titles
             payload["include_similar_titles"] = include_similar_titles
@@ -120,7 +195,7 @@ def search_people(api_key: str, company: str, locations: list[str], titles: list
 
 
 def search_company_tiers(api_key: str, company: str, locations: list[str], max_pages: int,
-                          tiers: dict) -> tuple[list[dict], str]:
+                          tiers: dict, domain: str | None = None) -> tuple[list[dict], str]:
     """Run each tier's search separately and merge, deduped by Apollo person id.
     Each person is tagged with which tier(s) matched them."""
     combined, seen, matched_as = [], {}, company
@@ -128,7 +203,7 @@ def search_company_tiers(api_key: str, company: str, locations: list[str], max_p
         people, matched_as = search_people_with_fallback(
             api_key, company, locations, max_pages,
             titles=cfg.get("titles"), seniorities=cfg.get("seniorities"),
-            include_similar_titles=cfg.get("include_similar_titles", True))
+            include_similar_titles=cfg.get("include_similar_titles", True), domain=domain)
         for p in people:
             pid = p.get("id")
             if pid in seen:
@@ -242,7 +317,8 @@ def apply_known_format(first: str, last: str, domain: str, fmt: str) -> str | No
 
 
 def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
-        enrich: bool, out_path: str, max_pages: int, sample_size: int, known_names_path: str | None):
+        enrich: bool, out_path: str, max_pages: int, sample_size: int, known_names_path: str | None,
+        company_domains_path: str | None = None):
     all_rows = []
     known_names = defaultdict(list)  # company -> [{"first", "last", "title"}, ...] supplied by the user
     if known_names_path:
@@ -255,9 +331,18 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
                         "title": parts[3] if len(parts) > 3 else "",
                     })
 
+    company_domains = {}  # company -> domain, for pinning past ambiguous name matches
+    if company_domains_path:
+        with open(company_domains_path, newline="") as f:
+            for parts in csv.reader(f):
+                parts = [p.strip() for p in parts]
+                if len(parts) >= 2 and parts[1]:
+                    company_domains[parts[0]] = parts[1]
+
     for company in companies:
         print(f"Searching: {company}")
-        people, matched_as = search_company_tiers(api_key, company, locations, max_pages, tiers)
+        domain_pin = company_domains.get(company)
+        people, matched_as = search_company_tiers(api_key, company, locations, max_pages, tiers, domain=domain_pin)
         tier_counts = {t: sum(1 for p in people if t in p["_tiers"]) for t in tiers}
         breakdown = ", ".join(f"{t}={n}" for t, n in tier_counts.items())
         print(f"  found {len(people)} unique match(es) across tiers: {breakdown}")
@@ -406,6 +491,11 @@ def main():
                                                "name + last-name mask, using title to break ties) before an email "
                                                "is predicted for free. Ambiguous or unmatched names are skipped, "
                                                "not guessed.")
+    parser.add_argument("--company-domains", help="Path to a CSV (company,domain) pinning specific companies to "
+                                                    "their real domain, bypassing fuzzy name matching entirely. "
+                                                    "Use this for companies whose name collides with unrelated "
+                                                    "businesses (e.g. shares a place name) that fuzzy matching "
+                                                    "can't confidently resolve on its own.")
     parser.add_argument("--out", default="apollo_leads.csv", help="Output CSV path")
     parser.add_argument("--max-pages", type=int, default=4, help="Max pages of search results per company per tier")
     args = parser.parse_args()
@@ -443,7 +533,7 @@ def main():
 
     run(companies, tiers, locations, args.api_key, enrich=not args.no_enrich,
         out_path=args.out, max_pages=args.max_pages, sample_size=args.sample_size,
-        known_names_path=args.known_names)
+        known_names_path=args.known_names, company_domains_path=args.company_domains)
 
 
 if __name__ == "__main__":
