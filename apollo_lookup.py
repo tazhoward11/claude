@@ -1,16 +1,23 @@
 #!/usr/bin/env python3
 """
-Apollo.io lead lookup: given company name(s) + job titles, find people in the
-target region, enrich them for verified emails, and infer each company's
-email format (e.g. first.last@domain.com) from the verified results.
+Apollo.io lead lookup: given company name(s), find two tiers of contacts per
+company - decision-makers and marketing/champion contacts - enrich a small
+sample for verified emails, and infer each company's email format
+(e.g. first.last@domain.com) from the verified results.
+
+Decision-maker and marketing tiers are matched by Apollo's normalized
+seniority bands (owner, founder, c_suite, partner, vp, head, director,
+manager, ...) rather than exact title strings, since exact titles vary
+wildly by industry (e.g. "First Vice President" in banking).
 
 API key is read from the APOLLO_API_KEY environment variable, or --api-key.
 Never hardcode the key in this file or in shell history.
 
 Usage:
     export APOLLO_API_KEY="..."
-    python3 apollo_lookup.py "Acme Movers" --titles "Owner,Operations Manager"
-    python3 apollo_lookup.py --companies-file companies.txt --titles "Owner,GM" --out leads.csv
+    python3 apollo_lookup.py "Acme Corp"
+    python3 apollo_lookup.py --companies-file companies.txt --out leads.csv
+    python3 apollo_lookup.py "Acme Corp" --decision-seniorities "owner,founder,c_suite,partner,vp"
 """
 
 import argparse
@@ -39,6 +46,15 @@ DEFAULT_LOCATIONS = [
     "Luling, Texas", "Rockdale, Texas", "Cameron, Texas",
 ]
 
+# Decision-maker tier deliberately leaves "vp" out by default: VP is a genuinely
+# senior title at a small business or tech company, but at a bank or large
+# enterprise it can be a mid-level individual contributor (e.g. Frost Bank has
+# dozens of "Assistant Vice President" / "Vice President" loan officers). Add
+# "vp" back in per-campaign with --decision-seniorities where it's appropriate.
+DEFAULT_DECISION_SENIORITIES = ["owner", "founder", "c_suite", "partner", "head"]
+DEFAULT_MARKETING_TITLES = ["marketing", "brand", "communications", "chief marketing officer"]
+DEFAULT_MARKETING_SENIORITIES = ["c_suite", "head", "director", "manager"]
+
 SEARCH_URL = f"{API_BASE}/mixed_people/api_search"
 MATCH_URL = f"{API_BASE}/people/match"
 
@@ -49,15 +65,17 @@ def api_headers(api_key: str) -> dict:
     return {"Content-Type": "application/json", "x-api-key": api_key}
 
 
-def search_people_with_fallback(api_key: str, company: str, titles: list[str], locations: list[str],
-                                 max_pages: int) -> tuple[list[dict], str]:
+def search_people_with_fallback(api_key: str, company: str, locations: list[str], max_pages: int,
+                                 titles: list[str] | None = None, seniorities: list[str] | None = None,
+                                 include_similar_titles: bool = True) -> tuple[list[dict], str]:
     """Apollo's org name match isn't fuzzy against extra words (e.g. 'Acme Capital'
     may not match an org listed as just 'Acme'). Retry with trailing words dropped
     until something matches. Returns (people, name_that_matched)."""
     words = company.split()
     candidates = [company] + [" ".join(words[:i]) for i in range(len(words) - 1, 0, -1)]
     for candidate in candidates:
-        people = search_people(api_key, candidate, titles, locations, max_pages=max_pages)
+        people = search_people(api_key, candidate, locations, titles=titles, seniorities=seniorities,
+                                include_similar_titles=include_similar_titles, max_pages=max_pages)
         if people:
             if candidate != company:
                 print(f"  no results for '{company}', falling back to '{candidate}'")
@@ -65,18 +83,23 @@ def search_people_with_fallback(api_key: str, company: str, titles: list[str], l
     return [], company
 
 
-def search_people(api_key: str, company: str, titles: list[str], locations: list[str],
+def search_people(api_key: str, company: str, locations: list[str], titles: list[str] | None = None,
+                   seniorities: list[str] | None = None, include_similar_titles: bool = True,
                    per_page: int = 25, max_pages: int = 4) -> list[dict]:
     results = []
     page = 1
     while page <= max_pages:
         payload = {
             "q_organization_name": company,
-            "person_titles": titles,
             "person_locations": locations,
             "page": page,
             "per_page": per_page,
         }
+        if titles:
+            payload["person_titles"] = titles
+            payload["include_similar_titles"] = include_similar_titles
+        if seniorities:
+            payload["person_seniorities"] = seniorities
         resp = SESSION.post(SEARCH_URL, headers=api_headers(api_key), json=payload, timeout=30)
         if resp.status_code != 200:
             print(f"  [search] {company}: HTTP {resp.status_code} - {resp.text}", file=sys.stderr)
@@ -90,6 +113,29 @@ def search_people(api_key: str, company: str, titles: list[str], locations: list
         page += 1
         time.sleep(0.3)
     return results
+
+
+def search_company_tiers(api_key: str, company: str, locations: list[str], max_pages: int,
+                          tiers: dict) -> tuple[list[dict], str]:
+    """Run each tier's search separately and merge, deduped by Apollo person id.
+    Each person is tagged with which tier(s) matched them."""
+    combined, seen, matched_as = [], {}, company
+    for tier_name, cfg in tiers.items():
+        people, matched_as = search_people_with_fallback(
+            api_key, company, locations, max_pages,
+            titles=cfg.get("titles"), seniorities=cfg.get("seniorities"),
+            include_similar_titles=cfg.get("include_similar_titles", True))
+        for p in people:
+            pid = p.get("id")
+            if pid in seen:
+                existing = seen[pid]
+                if tier_name not in existing["_tiers"]:
+                    existing["_tiers"].append(tier_name)
+                continue
+            p["_tiers"] = [tier_name]
+            seen[pid] = p
+            combined.append(p)
+    return combined, matched_as
 
 
 def enrich_person(api_key: str, person: dict) -> dict | None:
@@ -125,15 +171,6 @@ def guess_format(local_part: str, first: str, last: str) -> str:
         f: "first",
     }
     return templates.get(lp, f"other ({lp})")
-
-
-def infer_company_format(rows: list[dict]) -> str:
-    votes = Counter(r["guessed_format"] for r in rows if r.get("email_status") == "verified"
-                     and r["guessed_format"] not in ("unknown",) and not r["guessed_format"].startswith("other"))
-    if not votes:
-        return "insufficient data"
-    fmt, count = votes.most_common(1)[0]
-    return f"{fmt} (seen in {count}/{sum(votes.values())} verified emails)"
 
 
 MASK_RE = re.compile(r"^([^*]*)\*+([^*]*)$")
@@ -200,7 +237,7 @@ def apply_known_format(first: str, last: str, domain: str, fmt: str) -> str | No
     return f"{local}@{domain}" if local else None
 
 
-def run(companies: list[str], titles: list[str], locations: list[str], api_key: str,
+def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
         enrich: bool, out_path: str, max_pages: int, sample_size: int, known_names_path: str | None):
     all_rows = []
     known_names = defaultdict(list)  # company -> [{"first", "last", "title"}, ...] supplied by the user
@@ -216,8 +253,10 @@ def run(companies: list[str], titles: list[str], locations: list[str], api_key: 
 
     for company in companies:
         print(f"Searching: {company}")
-        people, matched_as = search_people_with_fallback(api_key, company, titles, locations, max_pages)
-        print(f"  found {len(people)} match(es)")
+        people, matched_as = search_company_tiers(api_key, company, locations, max_pages, tiers)
+        tier_counts = {t: sum(1 for p in people if t in p["_tiers"]) for t in tiers}
+        breakdown = ", ".join(f"{t}={n}" for t, n in tier_counts.items())
+        print(f"  found {len(people)} unique match(es) across tiers: {breakdown}")
 
         confirmed_domain = None
         confirmed_format = None
@@ -227,6 +266,7 @@ def run(companies: list[str], titles: list[str], locations: list[str], api_key: 
         for p in people:
             row = {
                 "company": company, "matched_as": matched_as,
+                "tier": "+".join(p.get("_tiers", [])),
                 "name": f"{p.get('first_name', '')} {p.get('last_name_obfuscated', '')}".strip(),
                 "title": p.get("title"), "linkedin_url": p.get("linkedin_url"),
                 "email": "", "email_status": "", "guessed_format": "", "note": "",
@@ -271,7 +311,7 @@ def run(companies: list[str], titles: list[str], locations: list[str], api_key: 
             for candidate in known_names.get(company, []):
                 matched_person, reason = resolve_candidate(candidate, people)
                 row = {
-                    "company": company, "matched_as": matched_as,
+                    "company": company, "matched_as": matched_as, "tier": "known_names",
                     "name": f"{candidate['first']} {candidate['last']}",
                     "title": candidate.get("title", ""), "linkedin_url": "",
                     "email": "", "email_status": "", "guessed_format": "",
@@ -289,11 +329,15 @@ def run(companies: list[str], titles: list[str], locations: list[str], api_key: 
                 all_rows.append(row)
 
     with open(out_path, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["company", "matched_as", "name", "title", "linkedin_url",
+        writer = csv.DictWriter(f, fieldnames=["company", "matched_as", "tier", "name", "title", "linkedin_url",
                                                 "email", "email_status", "guessed_format", "note"])
         writer.writeheader()
         writer.writerows(all_rows)
     print(f"\nWrote {len(all_rows)} rows to {out_path}")
+
+
+def csv_list(value: str) -> list[str]:
+    return [x.strip() for x in value.split(",") if x.strip()]
 
 
 def main():
@@ -301,15 +345,29 @@ def main():
     src = parser.add_mutually_exclusive_group(required=True)
     src.add_argument("company", nargs="?", help="Single company name")
     src.add_argument("--companies-file", help="Path to a text file, one company name per line")
-    parser.add_argument("--titles", required=True, help="Comma-separated job titles, e.g. 'Owner,Operations Manager'")
+
+    parser.add_argument("--decision-seniorities", default=",".join(DEFAULT_DECISION_SENIORITIES),
+                         help="Comma-separated Apollo seniority bands for the decision-maker tier. "
+                              "Valid values: owner,founder,c_suite,partner,vp,head,director,manager,senior,"
+                              "entry,intern. Pass '' to disable this tier's seniority filter.")
+    parser.add_argument("--decision-titles", default="",
+                         help="Optional explicit job titles for the decision-maker tier, combined (AND) with "
+                              "--decision-seniorities if both are set")
+    parser.add_argument("--marketing-titles", default=",".join(DEFAULT_MARKETING_TITLES),
+                         help="Comma-separated title keywords for the marketing/champion tier")
+    parser.add_argument("--marketing-seniorities", default=",".join(DEFAULT_MARKETING_SENIORITIES),
+                         help="Comma-separated Apollo seniority bands for the marketing tier")
+    parser.add_argument("--no-similar-titles", action="store_true",
+                         help="Disable Apollo's automatic expansion to similar job titles")
+
     parser.add_argument("--locations", help="Comma-separated locations; defaults to the San Marcos-Waco corridor")
     parser.add_argument("--api-key", default=os.environ.get("APOLLO_API_KEY"),
                          help="Apollo API key (defaults to APOLLO_API_KEY env var)")
     parser.add_argument("--no-enrich", action="store_true",
                          help="Skip enrichment (people/match) entirely; search results only, no emails, no credits spent")
     parser.add_argument("--sample-size", type=int, default=2,
-                         help="Max people to enrich per company to confirm the email format (default 2). "
-                              "Enrichment stops early once the format is confirmed twice.")
+                         help="Max people to enrich per company (across both tiers combined) to confirm the "
+                              "email format (default 2). Enrichment stops early once the format is confirmed twice.")
     parser.add_argument("--known-names", help="Path to a CSV (company,first,last[,title]) of people you already "
                                                "know the full name of (e.g. from a company's team page); each is "
                                                "cross-checked against Apollo's obfuscated search results (first "
@@ -317,7 +375,7 @@ def main():
                                                "is predicted for free. Ambiguous or unmatched names are skipped, "
                                                "not guessed.")
     parser.add_argument("--out", default="apollo_leads.csv", help="Output CSV path")
-    parser.add_argument("--max-pages", type=int, default=4, help="Max pages of search results per company")
+    parser.add_argument("--max-pages", type=int, default=4, help="Max pages of search results per company per tier")
     args = parser.parse_args()
 
     if not args.api_key:
@@ -329,10 +387,23 @@ def main():
     else:
         companies = [args.company]
 
-    titles = [t.strip() for t in args.titles.split(",") if t.strip()]
-    locations = [l.strip() for l in args.locations.split(",")] if args.locations else DEFAULT_LOCATIONS
+    locations = csv_list(args.locations) if args.locations else DEFAULT_LOCATIONS
+    include_similar = not args.no_similar_titles
 
-    run(companies, titles, locations, args.api_key, enrich=not args.no_enrich,
+    tiers = {
+        "decision_maker": {
+            "seniorities": csv_list(args.decision_seniorities) or None,
+            "titles": csv_list(args.decision_titles) or None,
+            "include_similar_titles": include_similar,
+        },
+        "marketing": {
+            "seniorities": csv_list(args.marketing_seniorities) or None,
+            "titles": csv_list(args.marketing_titles) or None,
+            "include_similar_titles": include_similar,
+        },
+    }
+
+    run(companies, tiers, locations, args.api_key, enrich=not args.no_enrich,
         out_path=args.out, max_pages=args.max_pages, sample_size=args.sample_size,
         known_names_path=args.known_names)
 
