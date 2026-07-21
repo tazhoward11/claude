@@ -54,6 +54,10 @@ DEFAULT_LOCATIONS = [
 DEFAULT_DECISION_SENIORITIES = ["owner", "founder", "c_suite", "partner", "head"]
 DEFAULT_MARKETING_TITLES = ["marketing", "brand", "communications", "chief marketing officer"]
 DEFAULT_MARKETING_SENIORITIES = ["c_suite", "head", "director", "manager"]
+# Gatekeepers: often the actual path to a decision-maker's calendar. Deliberately no
+# seniority filter - Apollo tags these as low formal seniority despite real access.
+DEFAULT_GATEKEEPER_TITLES = ["executive assistant", "assistant to the ceo", "assistant to the president",
+                             "chief of staff", "office manager"]
 
 SEARCH_URL = f"{API_BASE}/mixed_people/api_search"
 MATCH_URL = f"{API_BASE}/people/match"
@@ -262,12 +266,15 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
         confirmed_format = None
         format_votes = Counter()
         enriched_count = 0
+        person_rows = []  # (person, row) so free-name people can be filled in after format is confirmed
 
         for p in people:
+            last_masked = p.get("last_name_obfuscated") or ""
+            is_unmasked = last_masked and "*" not in last_masked
             row = {
                 "company": company, "matched_as": matched_as,
                 "tier": "+".join(p.get("_tiers", [])),
-                "name": f"{p.get('first_name', '')} {p.get('last_name_obfuscated', '')}".strip(),
+                "name": f"{p.get('first_name', '')} {last_masked}".strip(),
                 "title": p.get("title"), "linkedin_url": p.get("linkedin_url"),
                 "email": "", "email_status": "", "guessed_format": "", "note": "",
             }
@@ -291,10 +298,16 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
                                 format_votes[fmt] += 1
                                 if format_votes[fmt] >= min(2, sample_size):
                                     confirmed_format = fmt
+            elif is_unmasked:
+                # Apollo didn't obfuscate this one - full name is already free from
+                # search. Don't spend a credit; fill in a predicted email below once
+                # the company's format is confirmed.
+                row["note"] = "name not obfuscated by Apollo (free); email pending format confirmation"
             else:
                 row["note"] = "not enriched (sample budget spent) - last name obfuscated, real email unknown"
 
             all_rows.append(row)
+            person_rows.append((p, row))
 
         if not confirmed_format and format_votes:
             confirmed_format = format_votes.most_common(1)[0][0]
@@ -302,6 +315,21 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
         status = (f"format confirmed: {confirmed_format} @ {confirmed_domain}"
                   if confirmed_format else "could not confirm a format from sample")
         print(f"  {status} (spent {enriched_count} enrichment credit(s) on this company)")
+
+        # Fill in free predicted emails for anyone Apollo left unobfuscated, now that
+        # the format is known - no known-names file needed, no credit spent.
+        if confirmed_format and confirmed_domain:
+            for p, row in person_rows:
+                if row["email"]:
+                    continue
+                last_masked = p.get("last_name_obfuscated") or ""
+                if last_masked and "*" not in last_masked:
+                    predicted = apply_known_format(p.get("first_name"), last_masked, confirmed_domain, confirmed_format)
+                    if predicted:
+                        row["email"] = predicted
+                        row["email_status"] = "predicted (not verified)"
+                        row["guessed_format"] = confirmed_format
+                        row["note"] = "name not obfuscated by Apollo, format applied for free, no credit spent"
 
         # Apply the confirmed format to any full names you already know, for free -
         # but only after cross-validating each one against Apollo's own obfuscated
@@ -357,6 +385,10 @@ def main():
                          help="Comma-separated title keywords for the marketing/champion tier")
     parser.add_argument("--marketing-seniorities", default=",".join(DEFAULT_MARKETING_SENIORITIES),
                          help="Comma-separated Apollo seniority bands for the marketing tier")
+    parser.add_argument("--gatekeeper-titles", default=",".join(DEFAULT_GATEKEEPER_TITLES),
+                         help="Comma-separated title keywords for the gatekeeper tier (EAs, chiefs of staff, "
+                              "office managers) - often the real path to a decision-maker's calendar. "
+                              "Pass '' to disable this tier.")
     parser.add_argument("--no-similar-titles", action="store_true",
                          help="Disable Apollo's automatic expansion to similar job titles")
 
@@ -401,7 +433,13 @@ def main():
             "titles": csv_list(args.marketing_titles) or None,
             "include_similar_titles": include_similar,
         },
+        "gatekeeper": {
+            "seniorities": None,
+            "titles": csv_list(args.gatekeeper_titles) or None,
+            "include_similar_titles": include_similar,
+        },
     }
+    tiers = {k: v for k, v in tiers.items() if v.get("titles") or v.get("seniorities")}
 
     run(companies, tiers, locations, args.api_key, enrich=not args.no_enrich,
         out_path=args.out, max_pages=args.max_pages, sample_size=args.sample_size,
