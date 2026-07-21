@@ -49,6 +49,22 @@ def api_headers(api_key: str) -> dict:
     return {"Content-Type": "application/json", "x-api-key": api_key}
 
 
+def search_people_with_fallback(api_key: str, company: str, titles: list[str], locations: list[str],
+                                 max_pages: int) -> tuple[list[dict], str]:
+    """Apollo's org name match isn't fuzzy against extra words (e.g. 'Acme Capital'
+    may not match an org listed as just 'Acme'). Retry with trailing words dropped
+    until something matches. Returns (people, name_that_matched)."""
+    words = company.split()
+    candidates = [company] + [" ".join(words[:i]) for i in range(len(words) - 1, 0, -1)]
+    for candidate in candidates:
+        people = search_people(api_key, candidate, titles, locations, max_pages=max_pages)
+        if people:
+            if candidate != company:
+                print(f"  no results for '{company}', falling back to '{candidate}'")
+            return people, candidate
+    return [], company
+
+
 def search_people(api_key: str, company: str, titles: list[str], locations: list[str],
                    per_page: int = 25, max_pages: int = 4) -> list[dict]:
     results = []
@@ -127,12 +143,13 @@ def run(companies: list[str], titles: list[str], locations: list[str], api_key: 
 
     for company in companies:
         print(f"Searching: {company}")
-        people = search_people(api_key, company, titles, locations, max_pages=max_pages)
+        people, matched_as = search_people_with_fallback(api_key, company, titles, locations, max_pages)
         print(f"  found {len(people)} match(es)")
 
         for p in people:
             row = {
                 "company": company,
+                "matched_as": matched_as,
                 "name": f"{p.get('first_name', '')} {p.get('last_name_obfuscated', '')}".strip(),
                 "title": p.get("title"),
                 "linkedin_url": p.get("linkedin_url"),
@@ -159,7 +176,7 @@ def run(companies: list[str], titles: list[str], locations: list[str], api_key: 
             all_rows.append(row)
 
     with open(out_path, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["company", "name", "title", "linkedin_url",
+        writer = csv.DictWriter(f, fieldnames=["company", "matched_as", "name", "title", "linkedin_url",
                                                 "email", "email_status", "guessed_format"])
         writer.writeheader()
         writer.writerows(all_rows)
