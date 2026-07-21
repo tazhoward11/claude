@@ -27,6 +27,8 @@ import re
 import sys
 import time
 from collections import Counter, defaultdict
+from datetime import datetime, timezone
+from pathlib import Path
 
 import requests
 
@@ -63,6 +65,22 @@ SEARCH_URL = f"{API_BASE}/mixed_people/api_search"
 MATCH_URL = f"{API_BASE}/people/match"
 
 SESSION = requests.Session()
+
+# Persistent credit ledger - lives next to this script so it survives across
+# runs/sessions. Apollo's API exposes no usage endpoint, so this is a
+# self-maintained estimate: it logs every /people/match attempt (successful
+# or not - Apollo counts "unavailable" results too), and treats a person as
+# a NEW credit spend only the first time their Apollo id is ever seen here,
+# since re-revealing an already-revealed person is free. Cross-check against
+# your actual Apollo dashboard periodically - this is an estimate, not a bill.
+CREDIT_LOG_PATH = Path(__file__).parent / "apollo_credit_log.csv"
+CREDIT_LOG_FIELDS = ["timestamp", "company", "person_id", "name", "title", "email_status", "new_credit_spend"]
+
+# Below this many total candidates found for a company, --dry-run recommends
+# just grabbing the top person(s) rather than chasing a bigger sample - a
+# tiny Apollo footprint usually means the company isn't really Austin-based
+# or is small enough that only the top decision-maker matters.
+SMALL_FOOTPRINT_THRESHOLD = 20
 
 
 def api_headers(api_key: str) -> dict:
@@ -217,7 +235,34 @@ def search_company_tiers(api_key: str, company: str, locations: list[str], max_p
     return combined, matched_as
 
 
-def enrich_person(api_key: str, person: dict) -> dict | None:
+def load_previously_revealed_ids() -> set:
+    """Person ids this tool has ever attempted to enrich, from the persistent
+    ledger. Re-revealing one of these is free in Apollo, so it shouldn't count
+    as a new credit spend."""
+    if not CREDIT_LOG_PATH.exists():
+        return set()
+    with open(CREDIT_LOG_PATH, newline="") as f:
+        return {row["person_id"] for row in csv.DictReader(f) if row.get("person_id")}
+
+
+def log_enrichment_attempt(company: str, person: dict, enriched: dict | None, is_new: bool):
+    is_new_file = not CREDIT_LOG_PATH.exists()
+    with open(CREDIT_LOG_PATH, "a", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=CREDIT_LOG_FIELDS)
+        if is_new_file:
+            writer.writeheader()
+        writer.writerow({
+            "timestamp": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "company": company,
+            "person_id": person.get("id") or "",
+            "name": (enriched or {}).get("name") or person.get("first_name") or "",
+            "title": person.get("title") or "",
+            "email_status": (enriched or {}).get("email_status") or "no_response",
+            "new_credit_spend": "yes" if is_new else "no (already revealed)",
+        })
+
+
+def enrich_person(api_key: str, person: dict, company: str, revealed_ids: set) -> dict | None:
     payload = {"id": person.get("id")} if person.get("id") else {
         "first_name": person.get("first_name"),
         "last_name": person.get("last_name_obfuscated", "").split("*")[0] or None,
@@ -227,7 +272,13 @@ def enrich_person(api_key: str, person: dict) -> dict | None:
     if resp.status_code != 200:
         print(f"  [enrich] {payload}: HTTP {resp.status_code} - {resp.text}", file=sys.stderr)
         return None
-    return resp.json().get("person")
+    enriched = resp.json().get("person")
+    pid = person.get("id")
+    is_new = pid not in revealed_ids
+    log_enrichment_attempt(company, person, enriched, is_new)
+    if pid:
+        revealed_ids.add(pid)
+    return enriched
 
 
 EMAIL_RE = re.compile(r"^([^@]+)@(.+)$")
@@ -340,6 +391,9 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
                 if len(parts) >= 2 and parts[1]:
                     company_domains[parts[0]] = parts[1]
 
+    revealed_ids = load_previously_revealed_ids()
+    run_new_spend = 0
+
     for company in companies:
         print(f"Searching: {company}")
         domain_pin = company_domains.get(company)
@@ -366,8 +420,11 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
             }
 
             if enrich and confirmed_format is None and enriched_count < sample_size:
-                enriched = enrich_person(api_key, p)
+                was_new = p.get("id") not in revealed_ids
+                enriched = enrich_person(api_key, p, company, revealed_ids)
                 enriched_count += 1
+                if was_new:
+                    run_new_spend += 1
                 time.sleep(0.3)
                 if enriched:
                     row["name"] = enriched.get("name") or row["name"]
@@ -477,6 +534,72 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
         writer.writerows(all_rows)
     print(f"\nWrote {len(all_rows)} rows to {out_path}")
 
+    if enrich:
+        lifetime_spend = sum(1 for row in csv.DictReader(open(CREDIT_LOG_PATH)) if row["new_credit_spend"] == "yes") \
+            if CREDIT_LOG_PATH.exists() else 0
+        print(f"\nCredits: ~{run_new_spend} new this run, ~{lifetime_spend} lifetime total via this tool "
+              f"(estimate only - ledger at {CREDIT_LOG_PATH}; check your Apollo dashboard for the real number)")
+
+
+def run_dry_run_triage(companies: list[str], tiers: dict, locations: list[str], api_key: str,
+                        max_pages: int, out_path: str, small_threshold: int,
+                        company_domains_path: str | None = None):
+    """Free search-only pass (no enrichment, no credits) across a company list.
+    Categorizes each company by how many candidates Apollo actually has, and
+    recommends how many credits are worth spending - so you can approve an
+    actual number before anything gets charged, instead of guessing upfront."""
+    company_domains = {}
+    if company_domains_path:
+        with open(company_domains_path, newline="") as f:
+            for parts in csv.reader(f):
+                parts = [p.strip() for p in parts]
+                if len(parts) >= 2 and parts[1]:
+                    company_domains[parts[0]] = parts[1]
+
+    rows = []
+    counts = Counter()
+    recommended_total = 0
+
+    for company in companies:
+        print(f"Checking: {company}")
+        domain_pin = company_domains.get(company)
+        people, matched_as = search_company_tiers(api_key, company, locations, max_pages, tiers, domain=domain_pin)
+        tier_counts = {t: sum(1 for p in people if t in p["_tiers"]) for t in tiers}
+        total = len(people)
+
+        if total == 0:
+            category, recommended = "zero", 0
+        elif total < small_threshold:
+            category, recommended = "small", 1
+        else:
+            category, recommended = "large", 2
+        counts[category] += 1
+        recommended_total += recommended
+
+        breakdown = ", ".join(f"{t}={n}" for t, n in tier_counts.items())
+        print(f"  {total} candidate(s) ({breakdown}) -> {category}, recommend {recommended} credit(s)")
+
+        row = {"company": company, "matched_as": matched_as, "total_candidates": total,
+               "category": category, "recommended_credits": recommended}
+        row.update({f"{t}_count": tier_counts.get(t, 0) for t in tiers})
+        rows.append(row)
+
+    fieldnames = ["company", "matched_as", "total_candidates"] + \
+                 [f"{t}_count" for t in tiers] + ["category", "recommended_credits"]
+    with open(out_path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+    print(f"\n=== Triage summary (wrote {out_path}) ===")
+    print(f"  {counts['zero']} companies: zero candidates found - need manual domain research, 0 credits")
+    print(f"  {counts['small']} companies: small footprint (<{small_threshold}) - recommend 1 credit each "
+          f"(just grab the top person) = {counts['small']} credit(s)")
+    print(f"  {counts['large']} companies: larger footprint (>={small_threshold}) - recommend 2 credits + free "
+          f"web lookup each = {counts['large'] * 2} credit(s)")
+    print(f"  Estimated total for this batch: {recommended_total} credit(s) "
+          f"(nothing has been spent yet - this was a free search-only pass)")
+
 
 def csv_list(value: str) -> list[str]:
     return [x.strip() for x in value.split(",") if x.strip()]
@@ -527,6 +650,13 @@ def main():
                                                     "can't confidently resolve on its own.")
     parser.add_argument("--out", default="apollo_leads.csv", help="Output CSV path")
     parser.add_argument("--max-pages", type=int, default=4, help="Max pages of search results per company per tier")
+    parser.add_argument("--dry-run", action="store_true",
+                         help="Free search-only triage pass across the company list: no enrichment, no credits "
+                              "spent. Reports how many candidates Apollo actually has per company and recommends "
+                              "a credit budget, so you can approve a specific number before spending anything.")
+    parser.add_argument("--small-threshold", type=int, default=SMALL_FOOTPRINT_THRESHOLD,
+                         help=f"--dry-run only: below this many total candidates, a company is 'small' and gets "
+                              f"a 1-credit recommendation instead of 2 (default {SMALL_FOOTPRINT_THRESHOLD})")
     args = parser.parse_args()
 
     if not args.api_key:
@@ -559,6 +689,12 @@ def main():
         },
     }
     tiers = {k: v for k, v in tiers.items() if v.get("titles") or v.get("seniorities")}
+
+    if args.dry_run:
+        run_dry_run_triage(companies, tiers, locations, args.api_key, max_pages=args.max_pages,
+                            out_path=args.out, small_threshold=args.small_threshold,
+                            company_domains_path=args.company_domains)
+        return
 
     run(companies, tiers, locations, args.api_key, enrich=not args.no_enrich,
         out_path=args.out, max_pages=args.max_pages, sample_size=args.sample_size,
