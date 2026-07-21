@@ -350,8 +350,7 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
 
         confirmed_domain = None
         confirmed_format = None
-        format_votes = Counter()
-        domain_by_format = {}  # fmt -> the domain actually seen with that format
+        format_domain_votes = Counter()  # (fmt, domain) -> count - see note below
         enriched_count = 0
         person_rows = []  # (person, row) so free-name people can be filled in after format is confirmed
 
@@ -380,17 +379,20 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
                             local, domain = m.groups()
                             fmt = guess_format(local, enriched.get("first_name"), enriched.get("last_name"))
                             row["guessed_format"] = fmt
-                            # Don't blindly overwrite confirmed_domain here - a company can
-                            # have enrichments land on two different real domains (e.g. an
+                            # Vote on (format, domain) together, not format alone: a company
+                            # can have enrichments land on two different real domains (e.g. an
                             # "Operating Partner" whose Apollo profile is tied to a portfolio
-                            # company's domain instead of the fund's). Track per-format so the
-                            # domain we end up trusting is the one actually tied to whichever
-                            # format gets confirmed, not just whichever enrichment ran last.
-                            domain_by_format[fmt] = domain
+                            # company's domain, not the fund's own domain), and those two
+                            # unrelated domains can coincidentally produce the same-looking
+                            # format (e.g. both happen to be bare-last-name). Voting on format
+                            # alone would let that coincidence "confirm" a format for the wrong
+                            # domain. Only count it confirmed once the SAME domain backs the
+                            # SAME format twice.
                             if not fmt.startswith("other") and fmt != "unknown":
-                                format_votes[fmt] += 1
-                                if format_votes[fmt] >= min(2, sample_size):
-                                    confirmed_format = fmt
+                                key = (fmt, domain)
+                                format_domain_votes[key] += 1
+                                if format_domain_votes[key] >= min(2, sample_size):
+                                    confirmed_format, confirmed_domain = fmt, domain
             elif is_unmasked:
                 # Apollo didn't obfuscate this one - full name is already free from
                 # search. Don't spend a credit; fill in a predicted email below once
@@ -402,10 +404,17 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
             all_rows.append(row)
             person_rows.append((p, row))
 
-        if not confirmed_format and format_votes:
-            confirmed_format = format_votes.most_common(1)[0][0]
-        if confirmed_format:
-            confirmed_domain = domain_by_format.get(confirmed_format)
+        if not confirmed_format and format_domain_votes:
+            top_count = max(format_domain_votes.values())
+            top_keys = [k for k, v in format_domain_votes.items() if v == top_count]
+            if len(top_keys) == 1:
+                confirmed_format, confirmed_domain = top_keys[0]
+            else:
+                # Genuine tie between different (format, domain) combos - e.g. sample
+                # landed on two different real domains with no majority. Picking one
+                # would just be an arbitrary guess dressed up as a confirmed result.
+                print(f"  sample split evenly across {len(top_keys)} different (format, domain) "
+                      f"combos with no majority: {top_keys} - refusing to guess which is real")
 
         status = (f"format confirmed: {confirmed_format} @ {confirmed_domain}"
                   if confirmed_format else "could not confirm a format from sample")
