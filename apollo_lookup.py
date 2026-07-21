@@ -136,30 +136,52 @@ def infer_company_format(rows: list[dict]) -> str:
     return f"{fmt} (seen in {count}/{sum(votes.values())} verified emails)"
 
 
+def apply_known_format(first: str, last: str, domain: str, fmt: str) -> str | None:
+    """Build a predicted email for a known full name using an already-confirmed format."""
+    f, l = (first or "").strip().lower(), (last or "").strip().lower()
+    if not f or not l or not domain:
+        return None
+    builders = {
+        "first.last": f"{f}.{l}", "firstlast": f"{f}{l}", "flast": f"{f[0]}{l}",
+        "firstl": f"{f}{l[0]}", "first_last": f"{f}_{l}", "f.last": f"{f[0]}.{l}",
+        "last.first": f"{l}.{f}", "lastf": f"{l}{f[0]}", "first": f,
+    }
+    local = builders.get(fmt)
+    return f"{local}@{domain}" if local else None
+
+
 def run(companies: list[str], titles: list[str], locations: list[str], api_key: str,
-        enrich: bool, out_path: str, max_pages: int):
+        enrich: bool, out_path: str, max_pages: int, sample_size: int, known_names_path: str | None):
     all_rows = []
-    by_company_domain_rows = defaultdict(list)
+    known_names = defaultdict(list)  # company -> [(first, last), ...] supplied by the user
+    if known_names_path:
+        with open(known_names_path) as f:
+            for line in f:
+                parts = [x.strip() for x in line.strip().split(",")]
+                if len(parts) == 3:
+                    known_names[parts[0]].append((parts[1], parts[2]))
 
     for company in companies:
         print(f"Searching: {company}")
         people, matched_as = search_people_with_fallback(api_key, company, titles, locations, max_pages)
         print(f"  found {len(people)} match(es)")
 
+        confirmed_domain = None
+        confirmed_format = None
+        format_votes = Counter()
+        enriched_count = 0
+
         for p in people:
             row = {
-                "company": company,
-                "matched_as": matched_as,
+                "company": company, "matched_as": matched_as,
                 "name": f"{p.get('first_name', '')} {p.get('last_name_obfuscated', '')}".strip(),
-                "title": p.get("title"),
-                "linkedin_url": p.get("linkedin_url"),
-                "email": "",
-                "email_status": "",
-                "guessed_format": "",
+                "title": p.get("title"), "linkedin_url": p.get("linkedin_url"),
+                "email": "", "email_status": "", "guessed_format": "", "note": "",
             }
 
-            if enrich:
+            if enrich and confirmed_format is None and enriched_count < sample_size:
                 enriched = enrich_person(api_key, p)
+                enriched_count += 1
                 time.sleep(0.3)
                 if enriched:
                     row["name"] = enriched.get("name") or row["name"]
@@ -169,23 +191,42 @@ def run(companies: list[str], titles: list[str], locations: list[str], api_key: 
                         m = EMAIL_RE.match(row["email"])
                         if m:
                             local, domain = m.groups()
-                            row["guessed_format"] = guess_format(
-                                local, enriched.get("first_name"), enriched.get("last_name"))
-                            by_company_domain_rows[(company, domain)].append(row)
+                            fmt = guess_format(local, enriched.get("first_name"), enriched.get("last_name"))
+                            row["guessed_format"] = fmt
+                            confirmed_domain = domain
+                            if not fmt.startswith("other") and fmt != "unknown":
+                                format_votes[fmt] += 1
+                                if format_votes[fmt] >= min(2, sample_size):
+                                    confirmed_format = fmt
+            else:
+                row["note"] = "not enriched (sample budget spent) - last name obfuscated, real email unknown"
 
             all_rows.append(row)
 
+        if not confirmed_format and format_votes:
+            confirmed_format = format_votes.most_common(1)[0][0]
+
+        status = (f"format confirmed: {confirmed_format} @ {confirmed_domain}"
+                  if confirmed_format else "could not confirm a format from sample")
+        print(f"  {status} (spent {enriched_count} enrichment credit(s) on this company)")
+
+        # Apply the confirmed format to any full names you already know, for free.
+        if confirmed_format and confirmed_domain:
+            for first, last in known_names.get(company, []):
+                predicted = apply_known_format(first, last, confirmed_domain, confirmed_format)
+                all_rows.append({
+                    "company": company, "matched_as": matched_as, "name": f"{first} {last}",
+                    "title": "", "linkedin_url": "", "email": predicted or "",
+                    "email_status": "predicted (not verified)", "guessed_format": confirmed_format,
+                    "note": "from --known-names, no credit spent",
+                })
+
     with open(out_path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=["company", "matched_as", "name", "title", "linkedin_url",
-                                                "email", "email_status", "guessed_format"])
+                                                "email", "email_status", "guessed_format", "note"])
         writer.writeheader()
         writer.writerows(all_rows)
     print(f"\nWrote {len(all_rows)} rows to {out_path}")
-
-    if enrich and by_company_domain_rows:
-        print("\nInferred email formats:")
-        for (company, domain), rows in by_company_domain_rows.items():
-            print(f"  {company} ({domain}): {infer_company_format(rows)}")
 
 
 def main():
@@ -198,7 +239,13 @@ def main():
     parser.add_argument("--api-key", default=os.environ.get("APOLLO_API_KEY"),
                          help="Apollo API key (defaults to APOLLO_API_KEY env var)")
     parser.add_argument("--no-enrich", action="store_true",
-                         help="Skip enrichment (people/match) to save credits; search results only, no emails")
+                         help="Skip enrichment (people/match) entirely; search results only, no emails, no credits spent")
+    parser.add_argument("--sample-size", type=int, default=2,
+                         help="Max people to enrich per company to confirm the email format (default 2). "
+                              "Enrichment stops early once the format is confirmed twice.")
+    parser.add_argument("--known-names", help="Path to a CSV (company,first,last) of people you already know the "
+                                               "full name of; their emails get predicted from the confirmed format "
+                                               "for free, no enrichment call")
     parser.add_argument("--out", default="apollo_leads.csv", help="Output CSV path")
     parser.add_argument("--max-pages", type=int, default=4, help="Max pages of search results per company")
     args = parser.parse_args()
@@ -216,7 +263,8 @@ def main():
     locations = [l.strip() for l in args.locations.split(",")] if args.locations else DEFAULT_LOCATIONS
 
     run(companies, titles, locations, args.api_key, enrich=not args.no_enrich,
-        out_path=args.out, max_pages=args.max_pages)
+        out_path=args.out, max_pages=args.max_pages, sample_size=args.sample_size,
+        known_names_path=args.known_names)
 
 
 if __name__ == "__main__":
