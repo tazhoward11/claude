@@ -248,6 +248,7 @@ def guess_format(local_part: str, first: str, last: str) -> str:
         f"{l}.{f}": "last.first",
         f"{l}{f[0]}": "lastf",
         f: "first",
+        l: "last",
     }
     return templates.get(lp, f"other ({lp})")
 
@@ -310,7 +311,7 @@ def apply_known_format(first: str, last: str, domain: str, fmt: str) -> str | No
     builders = {
         "first.last": f"{f}.{l}", "firstlast": f"{f}{l}", "flast": f"{f[0]}{l}",
         "firstl": f"{f}{l[0]}", "first_last": f"{f}_{l}", "f.last": f"{f[0]}.{l}",
-        "last.first": f"{l}.{f}", "lastf": f"{l}{f[0]}", "first": f,
+        "last.first": f"{l}.{f}", "lastf": f"{l}{f[0]}", "first": f, "last": l,
     }
     local = builders.get(fmt)
     return f"{local}@{domain}" if local else None
