@@ -1,49 +1,67 @@
 company,matched_as,tier,name,title,linkedin_url,email,email_status,guessed_format,note
 Parthenon Capital,Parthenon Capital,decision_maker,Matt Lentz,Principal,,mlentz@parthenoncapital.com,verified,flast,
-Stafford Capital Partners,Stafford Capital Partners,decision_maker,Kurt Faulhaber,Partner,,kurtfaulhaber@staffordcp.com,verified,firstlast,
 Stafford Capital Partners,Stafford Capital Partners,decision_maker,Andrew Laing,"Principal, Head of Timber Performance, Reporting & Risk",,andrewlaing@staffordcp.com,verified,firstlast,
-Stafford Capital Partners,Stafford Capital Partners,decision_maker,Lane Fr***h,Principal,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
-Stafford Capital Partners,Stafford Capital Partners,decision_maker,Ashley Ma***w,"Head of North America, Business Development and Client Solutions",,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Stafford Capital Partners,Stafford Capital Partners,decision_maker,Lane French,Principal,,lanefrench@staffordcp.com,verified,firstlast,
+Stafford Capital Partners,Stafford Capital Partners,decision_maker,Kurt Fa***r,Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Stafford Capital Partners,Stafford Capital Partners,decision_maker,Eric Ra***a,Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Stafford Capital Partners,Stafford Capital Partners,decision_maker,Ashley Ma***w,"Head of North America, Business Development and Client Solutions",,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Stafford Capital Partners,Stafford Capital Partners,known_names,Lane French,Vice President Stafford Infrastructure,,lanefrench@staffordcp.com,predicted (not verified),firstlast,"from --known-names, no credit spent - unique match on first name + last-name mask"
+Stafford Capital Partners,Stafford Capital Partners,known_names,Ashley Marlow,NA Regional Lead,,ashleymarlow@staffordcp.com,predicted (not verified),firstlast,"from --known-names, no credit spent - unique match on first name + last-name mask"
+Stafford Capital Partners,Stafford Capital Partners,known_names,Eric Rama,Partner Stafford Timberland,,ericrama@staffordcp.com,predicted (not verified),firstlast,"from --known-names, no credit spent - unique match on first name + last-name mask"
 TA Associates,TA Associates,decision_maker,Roy Burns,"Managing Director, Co-Head Financial Services, Americas",,rburns@ta.com,verified,flast,
 TA Associates,TA Associates,gatekeeper,Sarah Grado,Executive Assistant,,sgrado@ta.com,verified,flast,
 Escalate Capital,Escalate Capital,decision_maker,Ross Cockrell,Co-Founder/Managing Director,,ross@escalatecapital.com,verified,first,
 Escalate Capital,Escalate Capital,decision_maker,Kokila Lozano,Principal,,kokila@escalatecapital.com,verified,first,
 Escalate Capital,Escalate Capital,decision_maker,Larry Br***w,Chief Operating Officer,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Escalate Capital,Escalate Capital,gatekeeper,Elspeth Da***n,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Escalate Capital,Escalate Capital,known_names,Larry Bradshaw,Portfolio Management and Compliance,,larry@escalatecapital.com,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
 Revival Healthcare Capital,Revival Healthcare Capital,decision_maker,Rick Anderson,Chairman,,rick@rvlhc.com,verified,first,
 Revival Healthcare Capital,Revival Healthcare Capital,decision_maker,Sam Liang,Operating Partner,,sam@rvlhc.com,verified,first,
 Revival Healthcare Capital,Revival Healthcare Capital,decision_maker,Lisa Ra***e,Head of Fund Administration and Compliance,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Revival Healthcare Capital,Revival Healthcare Capital,known_names,Lisa Rainone,Partner Head of Fund Administration and Compliance,,lisa@rvlhc.com,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
 CenterGate Capital,CenterGate Capital,decision_maker,Jill Holup,Chief Financial Officer/Chief Operating Officer,,jholup@centergatecapital.com,verified,flast,
 CenterGate Capital,CenterGate Capital,decision_maker,Lewis Schoenwetter,Managing Partner,,lewis@centergatecapital.com,verified,first,
 CenterGate Capital,CenterGate Capital,gatekeeper,Dallas De***o,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 CenterGate Capital,CenterGate Capital,gatekeeper,Kristen Os***e,Senior Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Cotton Creek Capital,Cotton Creek Capital,decision_maker,James Rinn,Cfo/cco,,,unavailable,,
 Strattam Capital,Strattam Capital,decision_maker,Bob Morse,Founding Managing Partner,,rmorse@strattam.com,verified,other (rmorse),
-Strattam Capital,Strattam Capital,decision_maker,Sean Williams,Vice President of Finance and Chief Compliance Officer,,swilliams@strattam.com,verified,flast,
-Strattam Capital,Strattam Capital,decision_maker,Andrew Ho***n,Principal,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Strattam Capital,Strattam Capital,decision_maker,Andrew Holden,Principal,,aholden@strattam.com,verified,flast,
+Strattam Capital,Strattam Capital,decision_maker,Sean Wi***s,Vice President of Finance and Chief Compliance Officer,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Strattam Capital,Strattam Capital,gatekeeper,Sarah Ab***m,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Strattam Capital,Strattam Capital,known_names,Andrew Holden,Principal,,aholden@strattam.com,predicted (not verified),flast,"from --known-names, no credit spent - unique match on first name + last-name mask"
 LiveOak Venture Partners,LiveOak Venture,decision_maker,Krishna Srinivasan,Founding Partner,,krishna@liveoak.vc,verified,first,
 LiveOak Venture Partners,LiveOak Venture,decision_maker,Venu Shamapant,Founding Partner,,venu@liveoak.vc,verified,first,
 LiveOak Venture Partners,LiveOak Venture,decision_maker,Mike Ma***o,Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 LiveOak Venture Partners,LiveOak Venture,decision_maker,Creighton Hi***s,Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 LiveOak Venture Partners,LiveOak Venture,marketing,Julianna Gi***o,Marketing Director,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 LiveOak Venture Partners,LiveOak Venture,gatekeeper,Wafae Ow***n,Office Manager,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+LiveOak Venture Partners,LiveOak Venture,known_names,Mike Marcantonio,Partner,,mike@liveoak.vc,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
+LiveOak Venture Partners,LiveOak Venture,known_names,Creighton Hicks,Partner,,creighton@liveoak.vc,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
+LiveOak Venture Partners,LiveOak Venture,known_names,Julianna Giraldo,Marketing,,julianna@liveoak.vc,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
 S3 Ventures,S3 Ventures,decision_maker,Eric Engineer,General Partner,,eric@s3vc.com,verified,first,
-S3 Ventures,S3 Ventures,decision_maker,Charlie Plauche,General Partner,,charlie@s3vc.com,verified,first,
-S3 Ventures,S3 Ventures,decision_maker,Aaron Pe***n,General Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+S3 Ventures,S3 Ventures,decision_maker,Aaron Perman,General Partner,,aaron@s3vc.com,verified,first,
 S3 Ventures,S3 Ventures,decision_maker,Joe Cu***y,Principal,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+S3 Ventures,S3 Ventures,decision_maker,Charlie Pl***e,General Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+S3 Ventures,S3 Ventures,known_names,Aaron Perman,General Partner,,aaron@s3vc.com,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
+S3 Ventures,S3 Ventures,known_names,Joe Curry,Principal,,joe@s3vc.com,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
+Silverton Partners,Silverton Partners,decision_maker,Mike Dodd,General Partner,,mike@silvertonpartners.com,verified,first,
 Silverton Partners,Silverton Partners,decision_maker,Kip McClanahan,General Partner,,kip@silvertonpartners.com,verified,first,
-Silverton Partners,Silverton Partners,decision_maker,Laura Dadoly,Partner,,,unavailable,,
-Silverton Partners,Silverton Partners,decision_maker,Addie Ra***e,Principal,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
-Silverton Partners,Silverton Partners,decision_maker,Mike Do***d,General Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Silverton Partners,Silverton Partners,decision_maker,Matthew Sa***a,Principal,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Silverton Partners,Silverton Partners,decision_maker,Addie Ra***e,Principal,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Silverton Partners,Silverton Partners,decision_maker,Laura Da***y,Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Silverton Partners,Silverton Partners,decision_maker,Morgan Fl***r,Managing Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Silverton Partners,Silverton Partners,decision_maker,Roger Ch***n,Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Silverton Partners,Silverton Partners,decision_maker,Kristen Du***k,Principal,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Silverton Partners,Silverton Partners,decision_maker,Alyssa Da***y,CFO & Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Silverton Partners,Silverton Partners,decision_maker,Rob Ta***r,Operating Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Silverton Partners,Silverton Partners,gatekeeper,Genevieve Si***r,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Silverton Partners,Silverton Partners,known_names,Morgan Flager,Managing Partner,,morgan@silvertonpartners.com,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
+Silverton Partners,Silverton Partners,known_names,Roger Chen,Partner,,roger@silvertonpartners.com,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
+Silverton Partners,Silverton Partners,known_names,Rob Taylor,Operating Partner,,rob@silvertonpartners.com,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
+Silverton Partners,Silverton Partners,known_names,Alyssa Dadoly,CFO and Partner,,alyssa@silvertonpartners.com,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
+Silverton Partners,Silverton Partners,known_names,Matthew Saitta,Principal,,matthew@silvertonpartners.com,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
+Silverton Partners,Silverton Partners,known_names,Addie Rasche,Principal,,addie@silvertonpartners.com,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
+Silverton Partners,Silverton Partners,known_names,Kristen Dumbeck,Principal,,kristen@silvertonpartners.com,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
 "Barton Creek Equity Partners, LLC","Barton Creek Equity Partners, LLC (pinned to bartoncreeklending.com)",decision_maker,Tommy Odonnell,Partner,,tommy@bartoncreeklending.com,verified,first,
 CapStream Group,CapStream Group,decision_maker,Randy Finch,Partner and Managing Director,,rfinch@capstreamgroup.com,verified,flast,
 Trammell Ventures,Trammell Ventures,decision_maker,Nicole Huebner,Chief Operating Officer,,nhuebner@trammell.ventures,verified,flast,
@@ -52,7 +70,7 @@ Serent Capital,Serent Capital,decision_maker,Kevin Frick,Partner,,kevin.frick@se
 Serent Capital,Serent Capital,gatekeeper,Carlye Nelson,Executive Assistant,,carlye.nelson@serentcapital.com,verified,first.last,
 Serent Capital,Serent Capital,gatekeeper,Addie Fl***g,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Serent Capital,Serent Capital,gatekeeper,Clare St***k,Executive Assistant & Austin Office Lead,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
-Peak Rock Capital,Peak Rock Capital (pinned to peakrockcapital.com),decision_maker,Stjohn Dunne,Principal | Operating Partner,,dunne@peakgrowthconsulting.com,verified,last,
+Peak Rock Capital,Peak Rock Capital (pinned to peakrockcapital.com),decision_maker,Stjohn Dunne,Principal | Operating Partner,,dunne@peakgrowthconsulting.com,verified,last,verified but domain 'peakgrowthconsulting.com' doesn't match pinned 'peakrockcapital.com' - excluded from format voting
 Peak Rock Capital,Peak Rock Capital (pinned to peakrockcapital.com),decision_maker,Michael Hornsby,Principal,,hornsby@peakrockcapital.com,verified,last,
 Peak Rock Capital,Peak Rock Capital (pinned to peakrockcapital.com),decision_maker,Rachel He***t,Principal | Operating Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Peak Rock Capital,Peak Rock Capital (pinned to peakrockcapital.com),decision_maker,Nathan Cl***k,Principal,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
@@ -62,7 +80,10 @@ Peak Rock Capital,Peak Rock Capital (pinned to peakrockcapital.com),decision_mak
 Peak Rock Capital,Peak Rock Capital (pinned to peakrockcapital.com),decision_maker,Jung Ch***i,Chief Financial Officer,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Peak Rock Capital,Peak Rock Capital (pinned to peakrockcapital.com),decision_maker,Carrie Fl***r,Principal,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Peak Rock Capital,Peak Rock Capital (pinned to peakrockcapital.com),gatekeeper,Elizabeth Si***s,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
-Peak Rock Capital,Peak Rock Capital (pinned to peakrockcapital.com),gatekeeper,Jennifer Mai,Executive Assistant,,,,,name not obfuscated by Apollo (free); email pending format confirmation
+Peak Rock Capital,Peak Rock Capital (pinned to peakrockcapital.com),gatekeeper,Jennifer Mai,Executive Assistant,,mai@peakrockcapital.com,predicted (not verified),last,"name not obfuscated by Apollo, format applied for free, no credit spent"
+Peak Rock Capital,Peak Rock Capital (pinned to peakrockcapital.com),known_names,Ryan Fitch,Managing Director,,fitch@peakrockcapital.com,predicted (not verified),last,"from --known-names, no credit spent - unique match on first name + last-name mask"
+Peak Rock Capital,Peak Rock Capital (pinned to peakrockcapital.com),known_names,John Scata,Chief Compliance Officer,,scata@peakrockcapital.com,predicted (not verified),last,"from --known-names, no credit spent - unique match on first name + last-name mask"
+Peak Rock Capital,Peak Rock Capital (pinned to peakrockcapital.com),known_names,Jung Choi,Chief Financial Officer,,choi@peakrockcapital.com,predicted (not verified),last,"from --known-names, no credit spent - unique match on first name + last-name mask"
 SNH Capital Partners,SNH Capital Partners,decision_maker,Matt Gilbreath,Chief Operating Officer,,mgilbreath@snhcap.com,verified,flast,
 SNH Capital Partners,SNH Capital Partners,decision_maker,Jevin Sackett,Founder & Chief Executive Officer,,jsackett@snhcap.com,verified,flast,
 SNH Capital Partners,SNH Capital Partners,gatekeeper,Juan En***t,Chief of Staff,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
@@ -74,8 +95,8 @@ Austin Growth Capital,Austin Growth Capital (pinned to austingrowthcapital.com),
 8VC,8VC,decision_maker,Alex Moore,"Partner, 8VC",,amoore@8vc.com,verified,flast,
 8VC,8VC,decision_maker,Jake Medwell,Co-Founder and Partner,,jake@8vc.com,verified,first,
 8VC,8VC,gatekeeper,Adrienne Al***r,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
-8VC,8VC,gatekeeper,Tyler Ba***r,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 8VC,8VC,gatekeeper,Elizabeth Tr***r,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+8VC,8VC,gatekeeper,Tyler Ba***r,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 8VC,8VC,gatekeeper,Stephanie Ch***n,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 8VC,8VC,gatekeeper,Denise Me***z,Office Manager,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Sapphire Ventures,Sapphire Ventures,decision_maker+gatekeeper,Charlie Rexford,Chief of Staff to CEO,,charlie@sapphireventures.com,verified,first,
@@ -88,6 +109,12 @@ Sapphire Ventures,Sapphire Ventures,marketing,Tori Ro***n,"Senior Director, Mark
 Sapphire Ventures,Sapphire Ventures,gatekeeper,Lacy Ba***a,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Sapphire Ventures,Sapphire Ventures,gatekeeper,Danielle Ro***i,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Sapphire Ventures,Sapphire Ventures,gatekeeper,Anna Og***a,Executive Assistant to CEO,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Sapphire Ventures,Sapphire Ventures,known_names,Steve Abbott,Partner Capital Markets,,steve@sapphireventures.com,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
+Sapphire Ventures,Sapphire Ventures,known_names,Abigail Johnson,Partner Chief Operating Officer,,abigail@sapphireventures.com,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
+Sapphire Ventures,Sapphire Ventures,known_names,Krupa Vankayala,Partner People and HR,,krupa@sapphireventures.com,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
+Sapphire Ventures,Sapphire Ventures,known_names,Monica Soliz,Director Marketing,,monica@sapphireventures.com,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
+Sapphire Ventures,Sapphire Ventures,known_names,Tori Robertson,Senior Director Marketing,,tori@sapphireventures.com,predicted (not verified),first,"from --known-names, no credit spent - unique match on first name + last-name mask"
 Next Coast Ventures LLC,Next Coast Ventures LLC,decision_maker,Michael Smerklo,Co Founder & Managing Director - Investor,,msmerklo@nextcoastventures.com,verified,flast,
 Next Coast Ventures LLC,Next Coast Ventures LLC,decision_maker,Kaitlyn Debernardo,"Partner, COO and Head of Platform",,kdebernardo@nextcoastventures.com,verified,flast,
 Next Coast Ventures LLC,Next Coast Ventures LLC,decision_maker,Thomas Ba***l,Co-Founder & Managing Director,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Next Coast Ventures LLC,Next Coast Ventures LLC,known_names,Thomas Ball,Co-Founder and Managing Director,,tball@nextcoastventures.com,predicted (not verified),flast,"from --known-names, no credit spent - unique match on first name + last-name mask"
