@@ -56,6 +56,9 @@ DEFAULT_LOCATIONS = [
 DEFAULT_DECISION_SENIORITIES = ["owner", "founder", "c_suite", "partner", "head"]
 DEFAULT_MARKETING_TITLES = ["marketing", "brand", "communications", "chief marketing officer"]
 DEFAULT_MARKETING_SENIORITIES = ["c_suite", "head", "director", "manager"]
+DEFAULT_RECRUITING_TITLES = ["recruiting", "talent acquisition", "talent", "people", "human resources",
+                              "chief people officer", "chief human resources officer"]
+DEFAULT_RECRUITING_SENIORITIES = ["c_suite", "head", "director", "vp", "manager"]
 # Gatekeepers: often the actual path to a decision-maker's calendar. Deliberately no
 # seniority filter - Apollo tags these as low formal seniority despite real access.
 DEFAULT_GATEKEEPER_TITLES = ["executive assistant", "assistant to the ceo", "assistant to the president",
@@ -622,6 +625,11 @@ def main():
                          help="Comma-separated title keywords for the marketing/champion tier")
     parser.add_argument("--marketing-seniorities", default=",".join(DEFAULT_MARKETING_SENIORITIES),
                          help="Comma-separated Apollo seniority bands for the marketing tier")
+    parser.add_argument("--recruiting-titles", default=",".join(DEFAULT_RECRUITING_TITLES),
+                         help="Comma-separated title keywords for the recruiting/talent tier (Head of Talent, "
+                              "Chief People Officer, Talent Acquisition, HR leadership). Pass '' to disable.")
+    parser.add_argument("--recruiting-seniorities", default=",".join(DEFAULT_RECRUITING_SENIORITIES),
+                         help="Comma-separated Apollo seniority bands for the recruiting/talent tier")
     parser.add_argument("--gatekeeper-titles", default=",".join(DEFAULT_GATEKEEPER_TITLES),
                          help="Comma-separated title keywords for the gatekeeper tier (EAs, chiefs of staff, "
                               "office managers) - often the real path to a decision-maker's calendar. "
@@ -672,14 +680,24 @@ def main():
     include_similar = not args.no_similar_titles
 
     tiers = {
-        "decision_maker": {
-            "seniorities": csv_list(args.decision_seniorities) or None,
-            "titles": csv_list(args.decision_titles) or None,
+        # Order matters: enrichment credits get spent on whichever tier's people
+        # come first in the combined list. Recruiting/marketing people are less
+        # likely to show up on a public "Leadership" team page than a CEO/founder,
+        # so they get priority for paid credits - decision-makers are usually
+        # findable for free via the company website instead.
+        "recruiting": {
+            "seniorities": csv_list(args.recruiting_seniorities) or None,
+            "titles": csv_list(args.recruiting_titles) or None,
             "include_similar_titles": include_similar,
         },
         "marketing": {
             "seniorities": csv_list(args.marketing_seniorities) or None,
             "titles": csv_list(args.marketing_titles) or None,
+            "include_similar_titles": include_similar,
+        },
+        "decision_maker": {
+            "seniorities": csv_list(args.decision_seniorities) or None,
+            "titles": csv_list(args.decision_titles) or None,
             "include_similar_titles": include_similar,
         },
         "gatekeeper": {
