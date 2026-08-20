@@ -604,6 +604,172 @@ def run_dry_run_triage(companies: list[str], tiers: dict, locations: list[str], 
           f"(nothing has been spent yet - this was a free search-only pass)")
 
 
+JUNK_EMAIL = re.compile(r"(\.png|\.jpe?g|\.gif|\.svg|\.webp|@2x|sentry|wixpress|example\.com|"
+                         r"user@domain|yourname|godaddy|squarespace|latinotype|sentry\.io)", re.I)
+
+
+def scrape_site_emails(domain: str) -> list[str]:
+    """Last-resort fallback for companies Apollo has no people for at all.
+    Small owner-operated businesses usually publish a contact address on their
+    own site; a general inbox at a 1-3 person shop is typically read by the
+    owner, which beats having nothing."""
+    found = set()
+    for path in ("", "/contact", "/contact-us", "/about"):
+        for scheme in ("https://", "https://www."):
+            try:
+                r = SESSION.get(f"{scheme}{domain}{path}", timeout=15,
+                                headers={"User-Agent": "Mozilla/5.0"})
+                if r.status_code != 200:
+                    continue
+                for e in re.findall(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", r.text):
+                    if not JUNK_EMAIL.search(e) and len(e) < 60:
+                        found.add(e.lower())
+                break
+            except Exception:
+                continue
+    # prefer addresses on the company's own domain
+    own = [e for e in found if e.endswith("@" + domain.lower())]
+    return sorted(own) or sorted(found)
+
+
+def neverbounce_check(email: str, nb_key: str) -> str:
+    """Returns valid / invalid / catchall / unknown. Costs 1 NeverBounce credit."""
+    try:
+        r = SESSION.get("https://api.neverbounce.com/v4/single/check",
+                        params={"key": nb_key, "email": email, "address_info": 0,
+                                "credits_info": 0, "timeout": 20}, timeout=45)
+        return r.json().get("result", "error")
+    except Exception:
+        return "error"
+
+
+def run_targets(targets_path: str, api_key: str, out_path: str, nb_key: str | None,
+                 no_enrich: bool = False):
+    """Enrich a specific list of named people rather than discovering them.
+
+    Input CSV: company,domain,first,last[,title]
+
+    Built because the discovery path (search a company, pick who looks relevant)
+    is the wrong shape when you already know exactly who you want. Matches each
+    person against Apollo's obfuscated last name before spending a credit, so a
+    credit never lands on the wrong person. Once any address at a domain is
+    verified, its format is applied for free to that domain's remaining targets."""
+    rows = []
+    with open(targets_path, newline="") as f:
+        for p in csv.reader(f):
+            p = [x.strip() for x in p]
+            if len(p) >= 4 and p[0].lower() != "company":
+                rows.append({"company": p[0], "domain": p[1], "first": p[2], "last": p[3],
+                             "title": p[4] if len(p) > 4 else ""})
+    print(f"{len(rows)} target(s) across {len(set(r['domain'] for r in rows))} domain(s)")
+
+    revealed = load_previously_revealed_ids()
+    people_cache: dict = {}
+    fmt_by_domain: dict = {}
+    spent = 0
+    out = []
+
+    for r in rows:
+        dom, fn, ln = r["domain"], r["first"], r["last"]
+        if dom not in people_cache:
+            people_cache[dom] = search_people(api_key, r["company"], [], max_pages=1, domain=dom)
+        pool = people_cache[dom]
+        hits = [p for p in pool
+                if (p.get("first_name") or "").strip().lower() == fn.lower()
+                and mask_matches(ln, p.get("last_name_obfuscated") or "")]
+
+        row = dict(r, email="", email_status="", source="", note="")
+        if len(hits) == 1 and not no_enrich:
+            p = hits[0]
+            was_new = p.get("id") not in revealed
+            e = enrich_person(api_key, p, r["company"], revealed)
+            if was_new:
+                spent += 1
+            time.sleep(0.3)
+            em = (e or {}).get("email") or ""
+            row["email"] = em
+            row["email_status"] = (e or {}).get("email_status") or "no email on file"
+            row["source"] = "apollo (credit spent)"
+            row["title"] = p.get("title") or r["title"]
+            if em and row["email_status"] == "verified" and "@" in em:
+                local, d = em.split("@", 1)
+                f2 = guess_format(local, fn, ln)
+                if not f2.startswith("other") and f2 != "unknown":
+                    fmt_by_domain.setdefault(d, f2)
+        elif len(hits) > 1:
+            row["note"] = f"AMBIGUOUS - {len(hits)} people match {fn} {ln}, skipped"
+        elif not pool:
+            row["note"] = "no Apollo record at this domain"
+        else:
+            row["note"] = f"{len(pool)} people at domain but no match for {fn} {ln}"
+        out.append(row)
+
+    # free pass: apply a confirmed domain format to targets we could not enrich
+    for row in out:
+        if row["email"]:
+            continue
+        fmt = fmt_by_domain.get(row["domain"])
+        if fmt:
+            pred = apply_known_format(row["first"], row["last"], row["domain"], fmt)
+            if pred:
+                row.update(email=pred, email_status="predicted (not verified)",
+                           source=f"format '{fmt}' confirmed at this domain, no credit")
+
+    # website fallback for domains where Apollo knows nobody
+    for dom in {r["domain"] for r in out if not r["email"] and not people_cache.get(r["domain"])}:
+        for e in scrape_site_emails(dom)[:1]:
+            for row in out:
+                if row["domain"] == dom and not row["email"]:
+                    row.update(email=e, email_status="general inbox",
+                               source="scraped from company website, no credit")
+
+    if nb_key:
+        # Last resort: for anyone still with no address, guess the usual patterns and
+        # let NeverBounce say which mailbox actually exists. Only worth trying on small
+        # business domains - a corporate catchall accepts every guess and proves nothing,
+        # so a catchall hit is reported as such rather than treated as a find.
+        for row in out:
+            if row["email"]:
+                continue
+            f, l, d = row["first"].lower(), row["last"].lower(), row["domain"]
+            for cand in (f, f"{f[0]}{l}", f"{f}.{l}", f"{f}{l}"):
+                res = neverbounce_check(f"{cand}@{d}", nb_key)
+                time.sleep(0.15)
+                if res == "valid":
+                    row.update(email=f"{cand}@{d}", email_status="found by pattern test",
+                               source="NeverBounce pattern test, no Apollo credit")
+                    break
+                if res == "catchall":
+                    row["note"] = (row["note"] + " | " if row["note"] else "") + \
+                        f"{d} is catchall - patterns cannot be tested"
+                    break
+
+        print("verifying with NeverBounce...")
+        for row in out:
+            if row["email"] and row["email_status"] not in ("verified", "found by pattern test"):
+                row["nb_result"] = neverbounce_check(row["email"], nb_key)
+                time.sleep(0.15)
+            elif row["email"]:
+                row["nb_result"] = "n/a (already confirmed)"
+            else:
+                row["nb_result"] = ""
+
+    fields = ["company", "domain", "first", "last", "title", "email", "email_status", "source", "note"]
+    if nb_key:
+        fields.append("nb_result")
+    with open(out_path, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=fields, extrasaction="ignore")
+        w.writeheader()
+        w.writerows(out)
+
+    got = sum(1 for r in out if r["email"])
+    print(f"\n{got}/{len(out)} have an address | {spent} Apollo credit(s) spent")
+    for r in out:
+        tag = r.get("nb_result") or r["email_status"]
+        print(f"  {r['first']} {r['last']:14s} {r['email'] or '-':40s} {tag}")
+    print(f"\nWrote {out_path}")
+
+
 def csv_list(value: str) -> list[str]:
     return [x.strip() for x in value.split(",") if x.strip()]
 
@@ -613,6 +779,13 @@ def main():
     src = parser.add_mutually_exclusive_group(required=True)
     src.add_argument("company", nargs="?", help="Single company name")
     src.add_argument("--companies-file", help="Path to a text file, one company name per line")
+    src.add_argument("--targets", help="Path to a CSV (company,domain,first,last[,title]) of specific "
+                                        "people to enrich. Use this when you already know exactly who you "
+                                        "want, instead of discovering people by company. Each person is "
+                                        "matched against Apollo's obfuscated last name before a credit is "
+                                        "spent, a confirmed domain format is applied free to that domain's "
+                                        "other targets, and companies Apollo has no record of fall back to "
+                                        "scraping the company website for a published address.")
 
     parser.add_argument("--decision-seniorities", default=",".join(DEFAULT_DECISION_SENIORITIES),
                          help="Comma-separated Apollo seniority bands for the decision-maker tier. "
@@ -662,6 +835,10 @@ def main():
                          help="Free search-only triage pass across the company list: no enrichment, no credits "
                               "spent. Reports how many candidates Apollo actually has per company and recommends "
                               "a credit budget, so you can approve a specific number before spending anything.")
+    parser.add_argument("--verify", action="store_true",
+                         help="Verify resulting emails with NeverBounce (1 NeverBounce credit each). "
+                              "Reads the key from NEVERBOUNCE_API_KEY. Apollo-verified addresses are "
+                              "skipped since they are already confirmed.")
     parser.add_argument("--small-threshold", type=int, default=SMALL_FOOTPRINT_THRESHOLD,
                          help=f"--dry-run only: below this many total candidates, a company is 'small' and gets "
                               f"a 1-credit recommendation instead of 2 (default {SMALL_FOOTPRINT_THRESHOLD})")
@@ -669,6 +846,14 @@ def main():
 
     if not args.api_key:
         parser.error("No API key: set APOLLO_API_KEY env var or pass --api-key")
+
+    nb_key = os.environ.get("NEVERBOUNCE_API_KEY") if args.verify else None
+    if args.verify and not nb_key:
+        parser.error("--verify needs NEVERBOUNCE_API_KEY set")
+
+    if args.targets:
+        run_targets(args.targets, args.api_key, args.out, nb_key, no_enrich=args.no_enrich)
+        return
 
     if args.companies_file:
         with open(args.companies_file) as f:

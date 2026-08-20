@@ -155,3 +155,9 @@ timestamp,company,person_id,name,title,email_status,new_credit_spend
 2026-08-20T17:46:22+00:00,Smarter Reality LLC,66f4350e47af530001b8eeba,Frank Coppersmith,CEO,verified,yes
 2026-08-20T17:46:23+00:00,Semper Feye Solutions,5ae25001a6da984d30486356,Robert Wagner,Chief Operations Officer,verified,yes
 2026-08-20T17:46:23+00:00,Squared Compass,62b3f5c03be46f0001257cef,Josh Lawton,Managing Partner,verified,yes
+2026-08-20T17:59:43+00:00,ATX Defense,670019457b229a0001618c7c,Zach Walker,Founder and Managing Partner,verified,no (already revealed)
+2026-08-20T17:59:44+00:00,MKS2 Technologies,66f6966aa238060001b84c8d,Brendan Mullen,Founder and CEO,verified,no (already revealed)
+2026-08-20T17:59:45+00:00,ATX Venture Partners,66f4fe943b4d0e00014e7cfe,Danielle Allen,General Partner + Co-Founder,verified,no (already revealed)
+2026-08-20T17:59:45+00:00,Smarter Reality LLC,66f4350e47af530001b8eeba,Frank Coppersmith,CEO,verified,no (already revealed)
+2026-08-20T17:59:46+00:00,Semper Feye Solutions,5ae25001a6da984d30486356,Robert Wagner,Chief Operations Officer,verified,no (already revealed)
+2026-08-20T17:59:47+00:00,Squared Compass,62b3f5c03be46f0001257cef,Josh Lawton,Managing Partner,verified,no (already revealed)
