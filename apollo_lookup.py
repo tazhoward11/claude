@@ -182,7 +182,8 @@ def search_people_with_fallback(api_key: str, company: str, locations: list[str]
 
 def search_people(api_key: str, company: str, locations: list[str], titles: list[str] | None = None,
                    seniorities: list[str] | None = None, include_similar_titles: bool = True,
-                   per_page: int = 25, max_pages: int = 4, domain: str | None = None) -> list[dict]:
+                   per_page: int = 25, max_pages: int = 4, domain: str | None = None,
+                   keywords: str | None = None) -> list[dict]:
     results = []
     page = 1
     while page <= max_pages:
@@ -200,6 +201,8 @@ def search_people(api_key: str, company: str, locations: list[str], titles: list
             payload["include_similar_titles"] = include_similar_titles
         if seniorities:
             payload["person_seniorities"] = seniorities
+        if keywords:
+            payload["q_keywords"] = keywords
         resp = SESSION.post(SEARCH_URL, headers=api_headers(api_key), json=payload, timeout=30)
         if resp.status_code != 200:
             print(f"  [search] {company}: HTTP {resp.status_code} - {resp.text}", file=sys.stderr)
@@ -671,12 +674,28 @@ def run_targets(targets_path: str, api_key: str, out_path: str, nb_key: str | No
 
     for r in rows:
         dom, fn, ln = r["domain"], r["first"], r["last"]
-        if dom not in people_cache:
-            people_cache[dom] = search_people(api_key, r["company"], [], max_pages=1, domain=dom)
-        pool = people_cache[dom]
-        hits = [p for p in pool
-                if (p.get("first_name") or "").strip().lower() == fn.lower()
-                and mask_matches(ln, p.get("last_name_obfuscated") or "")]
+
+        def matches(pool):
+            return [p for p in pool
+                    if (p.get("first_name") or "").strip().lower() == fn.lower()
+                    and mask_matches(ln, p.get("last_name_obfuscated") or "")]
+
+        # Search by the person's NAME, not by paging the company. At a large
+        # employer, pulling page one of the domain returns an arbitrary 25 people
+        # out of tens of thousands and misses the target nearly every time - that
+        # is why Bank of America and Wells Fargo contacts came back "no match"
+        # even though those people are in Apollo.
+        pool = search_people(api_key, r["company"], [], max_pages=1, domain=dom,
+                              keywords=f"{fn} {ln}")
+        hits = matches(pool)
+        if not hits:
+            # Small domains sometimes index poorly against keywords; fall back to a
+            # plain domain pull once, cached, since it is cheap for a small company.
+            if dom not in people_cache:
+                people_cache[dom] = search_people(api_key, r["company"], [], max_pages=1, domain=dom)
+            if people_cache[dom]:
+                pool = people_cache[dom]
+                hits = matches(pool)
 
         row = dict(r, email="", email_status="", source="", note="")
         if len(hits) == 1 and not no_enrich:

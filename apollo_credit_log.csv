@@ -161,3 +161,11 @@ timestamp,company,person_id,name,title,email_status,new_credit_spend
 2026-08-20T17:59:45+00:00,Smarter Reality LLC,66f4350e47af530001b8eeba,Frank Coppersmith,CEO,verified,no (already revealed)
 2026-08-20T17:59:46+00:00,Semper Feye Solutions,5ae25001a6da984d30486356,Robert Wagner,Chief Operations Officer,verified,no (already revealed)
 2026-08-20T17:59:47+00:00,Squared Compass,62b3f5c03be46f0001257cef,Josh Lawton,Managing Partner,verified,no (already revealed)
+2026-08-26T20:18:55+00:00,Amplify Credit Union,611804d1a0be490001e3f872,Kendall Garrison,Chief Executive Officer,verified,yes
+2026-08-26T20:18:56+00:00,Encompass Lending Group,54a3a52e74686938ac117f07,Josh Bibler,Regional Vice President,verified,yes
+2026-08-26T20:18:57+00:00,Residential Wholesale Mortgage,66f2bd81d220c400010d7150,Steve Ferguson,Branch Manager,verified,yes
+2026-08-26T20:25:08+00:00,Pulte Mortgage LLC,5c33c08080f93e6ec251c1e5,Pablo Rivas,Division President,verified,yes
+2026-08-26T20:25:09+00:00,Cadence Bank,66fea19b000ea100010959c6,David Grove,Austin Division President,verified,yes
+2026-08-26T20:25:11+00:00,UBS Bank USA,606f7584d07ef00001cccf68,Jeff Bidstrup,Market Director,verified,yes
+2026-08-26T20:25:12+00:00,"Charles Schwab Bank, SSB",54a99e647468693399e7be15,Richard Brandi,VP - Branch Manager,verified,yes
+2026-08-26T20:25:13+00:00,"Southstate Bank, National Association",65b31a7889fe3300017291b7,John Corbett,CEO,verified,yes
