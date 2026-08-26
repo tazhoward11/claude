@@ -1,0 +1,77 @@
+rank,company,name,title,email,phone,domain,why
+2,CMG Home Loans,Phil George,Marketing Director,pgeorge@cmgfi.com,512-874-3702,cmghomeloans.com,local marketing
+2,CMG Home Loans,John Weaver,marketing manager,jweaver@cmgfi.com,512-874-3702,cmghomeloans.com,local marketing
+2,CMG Home Loans,Michele Sniffen,,msniffen@cmgfi.com,512-874-3701,cmghomeloans.com,no title given
+3,DHI Mortgage Co. Ltd.,Tim Stahla,Area manager,TJStahla@dhimortgage.com,512-502-0545,dhimortgage.com,local market leader / branch decision-maker
+3,DHI Mortgage Co. Ltd.,Eddie Garza De Haro,branch sales manager,,512-502-0545,dhimortgage.com,local market leader / branch decision-maker
+4,JPMorgan Chase & Co.,Shannon O'Reilly,mortgage lending,shannon.oreilly@jpmchase.com,512-479-1581,jpmorganchase.com,producer / loan officer
+4,JPMorgan Chase & Co.,Ashlei Bobo,mortgage lending,ashlei.n.bobo@jpmchase.com,512-479-1581,jpmorganchase.com,producer / loan officer
+5,Taylor Morrison Home Funding Inc.,April Whitaker,Regional president,apwhitaker@taylormorrison.com,866-379-5390,taylormorrisonhf.com,local market leader / branch decision-maker
+6,Lennar Mortgage,Joe Crown,Division manager,joecrown@lennarmortgage.com,512-418-0550,lennarmortgage.com,local market leader / branch decision-maker
+6,Lennar Mortgage,Trisha Belliveau,production manager,trishabelliveau@lennarmortgage.com,512-418-0550,lennarmortgage.com,local market leader / branch decision-maker
+6,Lennar Mortgage,Kyle Simpson,Austin mortgage,KyleSimpson@lennarmortgage.com,512-418-0550,lennarmortgage.com,other
+8,Fairway Independent Mortgage Corp. - Round Rock,Steve Jacobson,CEO,,512-776-1420,fairway.com,company exec (local-HQ shop)
+8,Fairway Independent Mortgage Corp. - Round Rock,Drew Carls,,drew.carls@fairwaymc.com,512-776-1420,fairway.com,no title given
+9,Velocio Mortgage LLC,Jonathan Seal,Area sales manager,jseal@velociomortgage.com,512-314-7301,houseloan.com/velociomortgage,local market leader / branch decision-maker
+9,Velocio Mortgage LLC,Jerry Villarreal,residential mortgage LO (NMLS 1726390),GVgvillarreal@velociomortgage.com,512-314-7301,houseloan.com/velociomortgage,producer / loan officer
+9,Velocio Mortgage LLC,Brandon Burkhardt,residential mortgage LO (NMLS 917247),BBurkhardt@velociomortgage.com,512-314-7301,houseloan.com/velociomortgage,producer / loan officer
+10,UFCU,Lyndee Bennett,"Manager, Brand & Communications",lbennett@ufcu.org,512-467-8080,ufcu.org,local marketing
+10,UFCU,Raquel Garcia,Marketing Director,RGarcia@ufcu.org,512-467-8080,ufcu.org,local marketing
+10,UFCU,Terrie Doggett,Mortgage Services,tdoggett@ufcu.org,512-467-8080,ufcu.org,producer / loan officer
+10,UFCU,Shelly Martinez,,smartinez@ufcu.org,512-467-8080,ufcu.org,no title given
+11,First United Mortgage Group,Bryan Ezzell,SVP/managing director,bryan.ezzell@firstunitedbank.com,972-372-6800,firstunitedbank.com/mortgage,company exec (local-HQ shop)
+12,LoanPeople,Max Leaman,CEO,max.leaman@loanpeople.com,512-886-4450,loanpeople.com,company exec (local-HQ shop)
+12,LoanPeople,Dana Leaman,CMO,Dana@maxleaman.com,512-886-4450,loanpeople.com,company exec (local-HQ shop)
+13,"PrimeLending, a PlainsCapital Co.",Dawn Robinson,SVP/Southwest regional manager,drobinson@primelending.com,512-381-4642,primelending.com,company exec (local-HQ shop)
+14,Pulte Mortgage LLC,Pablo Rivas,Division president,,512-532-3347,pulte.com,local market leader / branch decision-maker
+16,KBHS Home Loans LLC,Tanya Russell,Branch manager,trussell1@kbhshomeloans.com,855-378-6625,kbhshomeloans.com,local market leader / branch decision-maker
+18,Cadence Bank,David Grove,Austin division president,,512-231-8821,cadencebank.com,local market leader / branch decision-maker
+18,Cadence Bank,Aaron Dominguez,VP,aaron.dominguez@bxs.com,512-231-8821,cadencebank.com,other
+18,Cadence Bank,Danielle Kernell,,Danielle.Kernell@cadencebank.com,512-231-8821,cadencebank.com,no title given
+18,Cadence Bank,Donald R. Grobowsky,,,512-231-8821,cadencebank.com,no title given
+21,M/I Financial LLC,Norm Lajewski,Branch manager,,512-770-8440,mihomes.com,local market leader / branch decision-maker
+25,Bank of America Home Loans,Cindy Chism,SVP-Austin home loans manager,,512-691-0751,bankofamerica.com,local market leader / branch decision-maker
+25,Bank of America Home Loans,David Bader,Austin president,,512-691-0751,bankofamerica.com,local market leader / branch decision-maker
+26,Brightland Mortgage Services Ltd.,Rachel Shields,LO,rshields@BrightlandMortgage.com,512-365-4984,brightlandmortgage.com/Austin,producer / loan officer
+26,Brightland Mortgage Services Ltd.,Evelyn Prince,residential mortgage LO,eprince@BrightlandMortgage.com,512-365-4984,brightlandmortgage.com/Austin,producer / loan officer
+26,Brightland Mortgage Services Ltd.,Crystal Ramsey,sales manager,cramsey@brightlandmortgage.com,512-365-4984,brightlandmortgage.com/Austin,other
+29,Guild Mortgage Company LLC,Chad Overhauser,Divisional VP,coverhauser@guildmortgage.net,512-335-5300,guildmortgage.com,local market leader / branch decision-maker
+29,Guild Mortgage Company LLC,Eric Weiss,RVP,eweiss@guildmortgage.net,512-335-5300,guildmortgage.com,local market leader / branch decision-maker
+33,Prosperity Bank,Chip Bray,Area president,chip.bray@prosperitybankusa.com,512-472-5433,prosperitybankusa.com,local market leader / branch decision-maker
+33,Prosperity Bank,Brent Weber,Area President,brent.weber@prosperitybankusa.com,512-472-5433,prosperitybankusa.com,local market leader / branch decision-maker
+33,Prosperity Bank,Eddie Safady,Vice chairman,eddie.safady@prosperitybankusa.com,512-472-5433,prosperitybankusa.com,company exec (local-HQ shop)
+35,Morgan Stanley Private Bank NA,Jeremy L. Vance,"VP, private banker (Mortgage Co. list contact)",jeremy.vance@ms.com,512-479-5707,morganstanley.com,other
+36,Ark-la-tex Financial Services dba Benchmark,Tommy Nelms,Senior branch manager,tommy.nelms@benchmark.us,512-804-9393,benchmark.us,local market leader / branch decision-maker
+37,Mission Mortgage of Texas Inc.,Leigh Ann McCoy,President,lamccoy@missionmortgage.com,512-328-0400,missionmortgage.com,company exec (local-HQ shop)
+37,Mission Mortgage of Texas Inc.,Lesley Guerrero,Director of Mortgage Operations,lguerrero@missionmortgage.com,512-328-0400,missionmortgage.com,other
+38,Wells Fargo Bank NA,Ben Murray,"SVP/regional executive, branch banking",,,wellsfargo.com,local market leader / branch decision-maker
+39,Frost Bank,Tim Crowley,Austin region president,tcrowley@frostbank.com,512-473-4343,frostbank.com,local market leader / branch decision-maker
+39,Frost Bank,Sallie Newman,VP marketing,snewman@frostbank.com,512-473-4343,frostbank.com,local marketing
+41,Randolph-Brooks Federal Credit Union,Mark Sekula,President/CEO,msekula@rbfcu.org,,rbfcu.org,company exec (local-HQ shop)
+44,"Roscoe Bank, a division of Cornerstone Capital Bank SSB",Rick Womble,Market president,rwomble@roscoestatebank.com,512-303-1800,rsb.bank,local market leader / branch decision-maker
+44,"Roscoe Bank, a division of Cornerstone Capital Bank SSB",John Lovelance,AVP,jlovelace@roscoebank.com,512-303-1800,rsb.bank,other
+56,Southern Lending Services,William Dorgan,SVP/Production manager,,512-617-3067,southernlendingservices.com,local market leader / branch decision-maker
+57,Movement Mortgage,Dan Reagan,Market Leader,dan.reagan@movement.com,512-947-1700,Movement.com,local market leader / branch decision-maker
+57,Movement Mortgage,Bobby Shull,Market leader,bobby.shull@movement.com,512-947-1700,Movement.com,local market leader / branch decision-maker
+57,Movement Mortgage,Michael Task,Loan originator,michael.task@movement.com,512-947-1700,Movement.com,producer / loan officer
+57,Movement Mortgage,Trish Busch,,trish.busch@movement.com,512-947-1700,Movement.com,no title given
+62,UBS Bank USA,Jeff Bidstrup,Market director,,,local.ubs.com/austintx-aj-downtown,local market leader / branch decision-maker
+64,Truist Bank,Stephen Smith,Market president,SMSmith@truist.com,512-472-7770,truist.com,local market leader / branch decision-maker
+64,Truist Bank,Cindy Montgomery,Retail/Communications,Cynthia.Montgomery@truist.com,512-472-7770,truist.com,other
+66,"Charles Schwab Bank, SSB",Richard Brandi,VP/Branch manager,,512-370-3880,schwab.com,local market leader / branch decision-maker
+70,SWBC,Charlie Amato,co-top local exec,,210-525-1241,swbc.com,other
+70,SWBC,Gary Dudley,co-top local exec,,210-525-1241,swbc.com,other
+72,"Southstate Bank, National Association",Hunter Adams,Branch manager,,512-652-0404,southstatebank.com,local market leader / branch decision-maker
+72,"Southstate Bank, National Association",John Corbett,CEO,,512-652-0404,southstatebank.com,company exec (local-HQ shop)
+75,SouthStar Bank SSB,Brent Gibbs,EVP/Central Texas president,brent.gibbs@southstarbank.com,512-288-3322,southstarbank.com,local market leader / branch decision-maker
+75,SouthStar Bank SSB,Keely McCarthy,Vice President of Marketing,keely.mccarthy@southstarbank.com,512-288-3322,southstarbank.com,local marketing
+79,Lower,Stacey Smith,Branch manager,stacey.smith@lower.com,512-750-4320,lower.com,local market leader / branch decision-maker
+84,Amplify Credit Union,Kendall Garrison,CEO/president,,512-836-5901,goamplify.com,company exec (local-HQ shop)
+88,BOK Financial Mortgage,Corey Enlow,,,844-517-3308,bokfinancial.com,no title given
+90,Encompass Lending Group,Josh Bibler,Regional VP,,512-587-9500,encompasslending.com,local market leader / branch decision-maker
+93,Residential Wholesale Mortgage,Steve Ferguson,Branch manager,,512-913-7566,rwmloans.com,local market leader / branch decision-maker
+98,Security State Bank & Trust,Tim Craig,"Branch President, Liberty Hill",tcraig@ssbtexas.com,512-263-1600,ssbtexas.com,local market leader / branch decision-maker
+98,Security State Bank & Trust,Brian Thibodeaux,"Branch president, Dripping Springs",bthibodeaux@ssbtexas.com,512-263-1600,ssbtexas.com,local market leader / branch decision-maker
+98,Security State Bank & Trust,Donna Hensley,"Branch president, Lago Vista",dhensley@ssbtexas.com,512-263-1600,ssbtexas.com,local market leader / branch decision-maker
+98,Security State Bank & Trust,Joe David Sherrod,"Branch president, Spicewood (Paleface, Bee Cave)",jsherrod@ssbtexas.com,512-263-1600,ssbtexas.com,local market leader / branch decision-maker
+99,Canopy Mortgage,E. Lee Smith,Branch manager,,512-598-9093,canopymortgage.com,local market leader / branch decision-maker
