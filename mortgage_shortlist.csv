@@ -3,7 +3,9 @@ rank,company,name,title,email,phone,domain,why,status
 2,CMG Home Loans,John Weaver,marketing manager,jweaver@cmgfi.com,512-874-3702,cmghomeloans.com,local marketing,from your list
 2,CMG Home Loans,Michele Sniffen,,msniffen@cmgfi.com,512-874-3701,cmghomeloans.com,no title given,from your list
 3,DHI Mortgage Co. Ltd.,Tim Stahla,Area manager,TJStahla@dhimortgage.com,512-502-0545,dhimortgage.com,local market leader / branch decision-maker,from your list
-3,DHI Mortgage Co. Ltd.,Eddie Garza De Haro,branch sales manager,,512-502-0545,dhimortgage.com,local market leader / branch decision-maker,no email found
+3,DHI Mortgage Co. Ltd.,Eddie Garza De Haro,branch sales manager,eharo@dhimortgage.com,512-502-0545,dhimortgage.com,local market leader / branch decision-maker | flast confirmed by 2 DHI addresses you supplied,predicted (not verified)
+3,DHI Mortgage Co. Ltd.,Thomas VanBuskirk,Digital Marketing Manager,tvanbuskirk@dhimortgage.com,512-502-0545,dhimortgage.com,local marketing,from your list
+3,DHI Mortgage Co. Ltd.,Viky Kalyta,Marketing Coordinator,vkalyta@dhimortgage.com,512-502-0545,dhimortgage.com,local marketing,from your list
 4,JPMorgan Chase & Co.,Shannon O'Reilly,mortgage lending,shannon.oreilly@jpmchase.com,512-479-1581,jpmorganchase.com,producer / loan officer,from your list
 4,JPMorgan Chase & Co.,Ashlei Bobo,mortgage lending,ashlei.n.bobo@jpmchase.com,512-479-1581,jpmorganchase.com,producer / loan officer,from your list
 5,Taylor Morrison Home Funding Inc.,April Whitaker,Regional president,apwhitaker@taylormorrison.com,866-379-5390,taylormorrisonhf.com,local market leader / branch decision-maker,from your list
