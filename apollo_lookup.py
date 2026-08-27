@@ -15,9 +15,21 @@ Never hardcode the key in this file or in shell history.
 
 Usage:
     export APOLLO_API_KEY="..."
-    python3 apollo_lookup.py "Acme Corp"
-    python3 apollo_lookup.py --companies-file companies.txt --out leads.csv
-    python3 apollo_lookup.py "Acme Corp" --decision-seniorities "owner,founder,c_suite,partner,vp"
+
+    # The normal run. One command, no flags to remember: writes leads.xlsx with a
+    # Contacts tab (max 4 per company, ranked best-first) and a Needs Manual
+    # Research tab, stops at 60 new credits, prints one summary line.
+    python3 apollo_lookup.py --companies-file companies.txt \
+        --out leads.csv --max-credits 60 --quiet
+
+    # companies.txt is one company name per line. If you know a company's domain,
+    # pin it so a fuzzy name match can't grab the wrong firm:
+    #   --company-domains domains.csv     (rows: Company Name,example.com)
+
+    # Other modes
+    python3 apollo_lookup.py "Acme Corp"                     # single company
+    python3 apollo_lookup.py --targets people.csv            # specific named people
+    python3 apollo_lookup.py --companies-file c.txt --dry-run  # free, spends nothing
 """
 
 import argparse
@@ -57,12 +69,12 @@ DEFAULT_LOCATIONS = [
     "La Grange, Texas", "Seguin, Texas", "New Braunfels, Texas",
 ]
 
-# Decision-maker tier deliberately leaves "vp" out by default: VP is a genuinely
-# senior title at a small business or tech company, but at a bank or large
-# enterprise it can be a mid-level individual contributor (e.g. Frost Bank has
-# dozens of "Assistant Vice President" / "Vice President" loan officers). Add
-# "vp" back in per-campaign with --decision-seniorities where it's appropriate.
-DEFAULT_DECISION_SENIORITIES = ["owner", "founder", "c_suite", "partner", "head"]
+# VP and director are in by default. Leaving them out kept dropping the actual
+# buyer at small and mid-size firms - Austin Staffing's President, KLP's CEO/COO
+# and Express Commercial Cleaning's President all came back "no candidates" until
+# these were added. Ranking (see rank_person) handles the fact that VP at a big
+# bank is an individual contributor while VP at a 20-person firm is the owner.
+DEFAULT_DECISION_SENIORITIES = ["owner", "founder", "c_suite", "partner", "head", "vp", "director"]
 DEFAULT_MARKETING_TITLES = ["marketing", "brand", "communications", "chief marketing officer"]
 DEFAULT_MARKETING_SENIORITIES = ["c_suite", "head", "director", "manager"]
 DEFAULT_RECRUITING_TITLES = ["recruiting", "talent acquisition", "talent", "people", "human resources",
@@ -87,6 +99,51 @@ SESSION = requests.Session()
 # your actual Apollo dashboard periodically - this is an estimate, not a bill.
 CREDIT_LOG_PATH = Path(__file__).parent / "apollo_credit_log.csv"
 CREDIT_LOG_FIELDS = ["timestamp", "company", "person_id", "name", "title", "email_status", "new_credit_spend"]
+
+DEFAULT_PER_COMPANY = 4
+
+# Outreach priority. Lower sorts first. The rule is "decision makers and the
+# highest marketing person, never four junior marketers", so seniority carries
+# more weight than which tier matched.
+SENIORITY_RANK = {
+    "owner": 0, "founder": 0, "c_suite": 1, "partner": 2, "president": 2,
+    "head": 3, "vp": 4, "director": 5, "manager": 7, "senior": 8,
+    "entry": 9, "intern": 10,
+}
+# Titles that mean "this person controls a local budget" at a multi-office firm,
+# and titles that look senior but are individual contributors.
+TITLE_BOOSTS = [
+    ("chief marketing", -3), ("cmo", -3), ("chief executive", -3), ("ceo", -3),
+    ("president", -2), ("owner", -3), ("founder", -3),
+    ("office managing", -2), ("managing partner", -2), ("market leader", -2),
+    ("regional president", -2), ("marketing", -1), ("brand", -1),
+    ("communications", -1), ("media", -1),
+]
+TITLE_PENALTIES = [
+    ("assistant", 4), ("coordinator", 4), ("associate", 3), ("specialist", 3),
+    ("intern", 6), ("recruiter", 3), ("human resources", 3), ("hr ", 3),
+    ("housekeeping", 5), ("data entry", 6),
+]
+
+
+def rank_person(person: dict, tiers: dict) -> tuple:
+    """Sort key putting the likeliest budget holder first."""
+    seniority = (person.get("seniority") or "").lower()
+    title = (person.get("title") or "").lower()
+    score = SENIORITY_RANK.get(seniority, 6)
+    for frag, delta in TITLE_BOOSTS:
+        if frag in title:
+            score += delta
+            break
+    for frag, delta in TITLE_PENALTIES:
+        if frag in title:
+            score += delta
+            break
+    # Break ties toward decision makers over pure marketing over gatekeepers.
+    person_tiers = person.get("_tiers", [])
+    tier_bias = 0 if "decision_maker" in person_tiers else (1 if "marketing" in person_tiers else 2)
+    return (score, tier_bias, title)
+
 
 # Below this many total candidates found for a company, --dry-run recommends
 # just grabbing the top person(s) rather than chasing a bigger sample - a
@@ -399,7 +456,12 @@ def apply_known_format(first: str, last: str, domain: str, fmt: str) -> str | No
 
 def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
         enrich: bool, out_path: str, max_pages: int, sample_size: int, known_names_path: str | None,
-        company_domains_path: str | None = None):
+        company_domains_path: str | None = None, max_credits: int | None = None,
+        quiet: bool = False, per_company: int = DEFAULT_PER_COMPANY):
+    def say(msg):
+        if not quiet:
+            print(msg)
+
     all_rows = []
     known_names = defaultdict(list)  # company -> [{"first", "last", "title"}, ...] supplied by the user
     if known_names_path:
@@ -423,13 +485,20 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
     revealed_ids = load_previously_revealed_ids()
     run_new_spend = 0
 
+    budget_stopped = False
     for company in companies:
-        print(f"Searching: {company}")
+        say(f"Searching: {company}")
         domain_pin = company_domains.get(company)
         people, matched_as = search_company_tiers(api_key, company, locations, max_pages, tiers, domain=domain_pin)
         tier_counts = {t: sum(1 for p in people if t in p["_tiers"]) for t in tiers}
         breakdown = ", ".join(f"{t}={n}" for t, n in tier_counts.items())
-        print(f"  found {len(people)} unique match(es) across tiers: {breakdown}")
+        say(f"  found {len(people)} unique match(es) across tiers: {breakdown}")
+
+        # Rank before enriching, so the sample credits land on the people actually
+        # worth reaching rather than whatever order Apollo returned. Spending both
+        # of a company's credits on two HR managers while the CEO goes unenriched
+        # is how this used to waste a batch.
+        people.sort(key=lambda p: rank_person(p, tiers))
 
         confirmed_domain = None
         confirmed_format = None
@@ -448,7 +517,11 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
                 "email": "", "email_status": "", "guessed_format": "", "note": "",
             }
 
-            if enrich and confirmed_format is None and enriched_count < sample_size:
+            over_budget = (max_credits is not None and run_new_spend >= max_credits
+                           and p.get("id") not in revealed_ids)
+            if over_budget:
+                budget_stopped = True
+            if enrich and not over_budget and confirmed_format is None and enriched_count < sample_size:
                 was_new = p.get("id") not in revealed_ids
                 enriched = enrich_person(api_key, p, company, revealed_ids)
                 enriched_count += 1
@@ -509,12 +582,12 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
                 # Genuine tie between different (format, domain) combos - e.g. sample
                 # landed on two different real domains with no majority. Picking one
                 # would just be an arbitrary guess dressed up as a confirmed result.
-                print(f"  sample split evenly across {len(top_keys)} different (format, domain) "
+                say(f"  sample split evenly across {len(top_keys)} different (format, domain) "
                       f"combos with no majority: {top_keys} - refusing to guess which is real")
 
         status = (f"format confirmed: {confirmed_format} @ {confirmed_domain}"
                   if confirmed_format else "could not confirm a format from sample")
-        print(f"  {status} (spent {enriched_count} enrichment credit(s) on this company)")
+        say(f"  {status} (spent {enriched_count} enrichment credit(s) on this company)")
 
         # Fill in free predicted emails for anyone Apollo left unobfuscated, now that
         # the format is known - no known-names file needed, no credit spent.
@@ -572,13 +645,92 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
                                                 "email", "email_status", "guessed_format", "note"])
         writer.writeheader()
         writer.writerows(all_rows)
-    print(f"\nWrote {len(all_rows)} rows to {out_path}")
 
-    if enrich:
-        lifetime_spend = sum(1 for row in csv.DictReader(open(CREDIT_LOG_PATH)) if row["new_credit_spend"] == "yes") \
-            if CREDIT_LOG_PATH.exists() else 0
-        print(f"\nCredits: ~{run_new_spend} new this run, ~{lifetime_spend} lifetime total via this tool "
-              f"(estimate only - ledger at {CREDIT_LOG_PATH}; check your Apollo dashboard for the real number)")
+    xlsx_path = str(Path(out_path).with_suffix(".xlsx"))
+    contacts, manual = write_workbook(all_rows, xlsx_path, per_company, companies)
+
+    lifetime = sum(1 for row in csv.DictReader(open(CREDIT_LOG_PATH)) if row["new_credit_spend"] == "yes") \
+        if CREDIT_LOG_PATH.exists() else 0
+    n_co = len({r[0] for r in contacts})
+    verified = sum(1 for r in contacts if r[4].startswith("Verified"))
+    print(f"\n{len(contacts)} contacts / {n_co} companies ({verified} verified, "
+          f"{len(contacts) - verified} pattern-based) | {len(manual)} need manual work | "
+          f"{run_new_spend} credits this run, ~{lifetime} lifetime | {xlsx_path}")
+    if budget_stopped:
+        print(f"STOPPED EARLY: hit the --max-credits {max_credits} cap. "
+              f"Re-run with a higher cap to finish the remaining companies.")
+
+
+CONFIDENCE_LABEL = {
+    "verified": "Verified by Apollo",
+    "predicted (not verified)": "Pattern-based - verify before sending",
+}
+
+
+def write_workbook(all_rows: list[dict], xlsx_path: str, per_company: int,
+                   companies: list[str]) -> tuple[list, list]:
+    """Write the two-tab outreach workbook and return (contacts, manual) rows.
+
+    Tab 1 is the send list, capped at per_company people each and already in
+    priority order. Tab 2 is everything that needs a human: people Apollo has no
+    email for, people whose surname stayed masked on a domain we could not crack,
+    and companies that produced nothing at all.
+    """
+    import openpyxl
+    from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+    from openpyxl.utils import get_column_letter
+
+    contacts, manual, per_co_count = [], [], Counter()
+    seen_companies = set()
+    for r in all_rows:
+        company, name = r["company"], r["name"]
+        if not name:
+            continue
+        seen_companies.add(company)
+        email, status = r.get("email", ""), r.get("email_status", "")
+        if email:
+            if per_co_count[company] >= per_company:
+                continue
+            per_co_count[company] += 1
+            contacts.append([company, name, r.get("title", ""), email,
+                             CONFIDENCE_LABEL.get(status, status or "Unknown")])
+        elif "*" in name or status == "unavailable":
+            why = ("Apollo has no email on file for this person" if status == "unavailable"
+                   else "Surname masked by Apollo and this domain's format needs it")
+            manual.append([company, name, r.get("title", ""), why])
+
+    for company in companies:
+        if company not in seen_companies:
+            manual.append([company, "", "", "No matching people in Apollo for the Austin corridor"])
+
+    wb = openpyxl.Workbook()
+    head_font = Font(bold=True, color="FFFFFF")
+    head_fill = PatternFill("solid", fgColor="1F3864")
+    thin = Side(style="thin", color="D9D9D9")
+    border = Border(left=thin, right=thin, top=thin, bottom=thin)
+
+    def build(ws, headers, data, widths):
+        ws.append(headers)
+        for c in ws[1]:
+            c.font, c.fill = head_font, head_fill
+        for row in data:
+            ws.append(row)
+        for i, w in enumerate(widths, start=1):
+            ws.column_dimensions[get_column_letter(i)].width = w
+        for row in ws.iter_rows(max_row=ws.max_row, max_col=len(headers)):
+            for c in row:
+                c.border = border
+                c.alignment = Alignment(vertical="top", wrap_text=True)
+        ws.freeze_panes = "A2"
+        ws.auto_filter.ref = ws.dimensions
+
+    ws = wb.active
+    ws.title = "Contacts"
+    build(ws, ["Company", "Name", "Title", "Email", "Confidence"], contacts, [30, 24, 42, 40, 30])
+    build(wb.create_sheet("Needs Manual Research"),
+          ["Company", "Name", "Title", "Why"], manual, [30, 24, 40, 60])
+    wb.save(xlsx_path)
+    return contacts, manual
 
 
 def run_dry_run_triage(companies: list[str], tiers: dict, locations: list[str], api_key: str,
@@ -882,7 +1034,16 @@ def main():
                                                     "Use this for companies whose name collides with unrelated "
                                                     "businesses (e.g. shares a place name) that fuzzy matching "
                                                     "can't confidently resolve on its own.")
-    parser.add_argument("--out", default="apollo_leads.csv", help="Output CSV path")
+    parser.add_argument("--max-credits", type=int, default=None,
+                        help="Hard cap on NEW Apollo credits for this run. The run stops enriching "
+                             "once it is hit and tells you which companies were left unfinished. "
+                             "Already-revealed people are free and don't count.")
+    parser.add_argument("--per-company", type=int, default=DEFAULT_PER_COMPANY,
+                        help=f"Max contacts per company on the Contacts tab (default {DEFAULT_PER_COMPANY})")
+    parser.add_argument("--quiet", action="store_true",
+                        help="Suppress per-company progress; print only the one-line summary")
+    parser.add_argument("--out", default="apollo_leads.csv",
+                        help="Output CSV path. A matching .xlsx workbook is written alongside it.")
     parser.add_argument("--max-pages", type=int, default=4, help="Max pages of search results per company per tier")
     parser.add_argument("--dry-run", action="store_true",
                          help="Free search-only triage pass across the company list: no enrichment, no credits "
@@ -954,7 +1115,8 @@ def main():
 
     run(companies, tiers, locations, args.api_key, enrich=not args.no_enrich,
         out_path=args.out, max_pages=args.max_pages, sample_size=args.sample_size,
-        known_names_path=args.known_names, company_domains_path=args.company_domains)
+        known_names_path=args.known_names, company_domains_path=args.company_domains,
+        max_credits=args.max_credits, quiet=args.quiet, per_company=args.per_company)
 
 
 if __name__ == "__main__":
