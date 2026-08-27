@@ -126,8 +126,13 @@ TITLE_PENALTIES = [
 ]
 
 
-def rank_person(person: dict, tiers: dict) -> tuple:
-    """Sort key putting the likeliest budget holder first."""
+def rank_person(person: dict, tiers: dict, marketing_first: bool = False) -> tuple:
+    """Sort key putting the likeliest budget holder first.
+
+    With marketing_first, the marketing tier sorts ahead of decision makers
+    outright - for batches where the ask is "the marketing contact, then the
+    top exec" rather than "the budget holder first".
+    """
     seniority = (person.get("seniority") or "").lower()
     title = (person.get("title") or "").lower()
     score = SENIORITY_RANK.get(seniority, 6)
@@ -141,6 +146,10 @@ def rank_person(person: dict, tiers: dict) -> tuple:
             break
     # Break ties toward decision makers over pure marketing over gatekeepers.
     person_tiers = person.get("_tiers", [])
+    if marketing_first:
+        tier_bias = 0 if "marketing" in person_tiers else (1 if "decision_maker" in person_tiers else 2)
+        # Tier leads the key, so the best marketing person outranks the CEO.
+        return (tier_bias, score, title)
     tier_bias = 0 if "decision_maker" in person_tiers else (1 if "marketing" in person_tiers else 2)
     return (score, tier_bias, title)
 
@@ -457,7 +466,8 @@ def apply_known_format(first: str, last: str, domain: str, fmt: str) -> str | No
 def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
         enrich: bool, out_path: str, max_pages: int, sample_size: int, known_names_path: str | None,
         company_domains_path: str | None = None, max_credits: int | None = None,
-        quiet: bool = False, per_company: int = DEFAULT_PER_COMPANY):
+        quiet: bool = False, per_company: int = DEFAULT_PER_COMPANY,
+        marketing_first: bool = False):
     def say(msg):
         if not quiet:
             print(msg)
@@ -498,7 +508,7 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
         # worth reaching rather than whatever order Apollo returned. Spending both
         # of a company's credits on two HR managers while the CEO goes unenriched
         # is how this used to waste a batch.
-        people.sort(key=lambda p: rank_person(p, tiers))
+        people.sort(key=lambda p: rank_person(p, tiers, marketing_first))
 
         confirmed_domain = None
         confirmed_format = None
@@ -1040,6 +1050,10 @@ def main():
                              "Already-revealed people are free and don't count.")
     parser.add_argument("--per-company", type=int, default=DEFAULT_PER_COMPANY,
                         help=f"Max contacts per company on the Contacts tab (default {DEFAULT_PER_COMPANY})")
+    parser.add_argument("--marketing-first", action="store_true",
+                        help="Rank the marketing contact ahead of the decision makers, instead of "
+                             "seniority-first. Use when the ask is 'the marketing person, then the "
+                             "top exec' rather than 'the budget holder'")
     parser.add_argument("--quiet", action="store_true",
                         help="Suppress per-company progress; print only the one-line summary")
     parser.add_argument("--out", default="apollo_leads.csv",
@@ -1116,7 +1130,8 @@ def main():
     run(companies, tiers, locations, args.api_key, enrich=not args.no_enrich,
         out_path=args.out, max_pages=args.max_pages, sample_size=args.sample_size,
         known_names_path=args.known_names, company_domains_path=args.company_domains,
-        max_credits=args.max_credits, quiet=args.quiet, per_company=args.per_company)
+        max_credits=args.max_credits, quiet=args.quiet, per_company=args.per_company,
+        marketing_first=args.marketing_first)
 
 
 if __name__ == "__main__":
