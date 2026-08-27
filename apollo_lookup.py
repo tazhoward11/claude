@@ -39,13 +39,22 @@ DEFAULT_LOCATIONS = [
     "San Marcos, Texas", "Kyle, Texas", "Buda, Texas", "Austin, Texas",
     "Round Rock, Texas", "Pflugerville, Texas", "Cedar Park, Texas",
     "Georgetown, Texas", "Taylor, Texas", "Hutto, Texas", "Temple, Texas",
-    "Belton, Texas", "Killeen, Texas", "Waco, Texas",
+    "Belton, Texas", "Killeen, Texas", "Waco, Texas", "Jarrell, Texas",
+    "Salado, Texas", "Harker Heights, Texas", "Copperas Cove, Texas",
+    # Austin metro suburbs. These were missing and it cost us real contacts -
+    # KLP Construction Supply (Manor) and Pro Tech Construction came back
+    # "nobody in the corridor" purely because their town was not on this list.
+    "Manor, Texas", "Del Valle, Texas", "Leander, Texas", "Liberty Hill, Texas",
+    "Lakeway, Texas", "Bee Cave, Texas", "Lago Vista, Texas", "Manchaca, Texas",
+    "Spicewood, Texas", "Kingsland, Texas", "Cedar Creek, Texas",
     # ~50mi west
     "Dripping Springs, Texas", "Wimberley, Texas", "Marble Falls, Texas",
-    "Burnet, Texas", "Lampasas, Texas", "Gatesville, Texas",
+    "Burnet, Texas", "Lampasas, Texas", "Gatesville, Texas", "Johnson City, Texas",
+    "Blanco, Texas",
     # ~50mi east
     "Bastrop, Texas", "Elgin, Texas", "Smithville, Texas", "Lockhart, Texas",
-    "Luling, Texas", "Rockdale, Texas", "Cameron, Texas",
+    "Luling, Texas", "Rockdale, Texas", "Cameron, Texas", "Giddings, Texas",
+    "La Grange, Texas", "Seguin, Texas", "New Braunfels, Texas",
 ]
 
 # Decision-maker tier deliberately leaves "vp" out by default: VP is a genuinely
