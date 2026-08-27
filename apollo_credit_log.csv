@@ -169,3 +169,13 @@ timestamp,company,person_id,name,title,email_status,new_credit_spend
 2026-08-26T20:25:11+00:00,UBS Bank USA,606f7584d07ef00001cccf68,Jeff Bidstrup,Market Director,verified,yes
 2026-08-26T20:25:12+00:00,"Charles Schwab Bank, SSB",54a99e647468693399e7be15,Richard Brandi,VP - Branch Manager,verified,yes
 2026-08-26T20:25:13+00:00,"Southstate Bank, National Association",65b31a7889fe3300017291b7,John Corbett,CEO,verified,yes
+2026-08-27T05:02:20+00:00,DHI Mortgage Co. Ltd.,66eed19e14f1ee000139cc26,Sonya Luechauer,President and Chief Executive Officer,verified,yes
+2026-08-27T05:02:22+00:00,Fairway Independent Mortgage,64fc7ff47fdd2c0001c5bb55,Matt Wood,Managing Partner,verified,yes
+2026-08-27T05:02:23+00:00,Pulte Mortgage LLC,5c33c08080f93e6ec251c1e5,Pablo Rivas,Division President,verified,no (already revealed)
+2026-08-27T05:02:24+00:00,KBHS Home Loans LLC,66f6169d672c7000016c9ada,Louie Colatriano,President,verified,yes
+2026-08-27T05:02:47+00:00,CMG Home Loans,5e741bae7391cc000123ef91,Jennifer Houston,SVP,verified,yes
+2026-08-27T05:02:48+00:00,DHI Mortgage,66ede62c4f5dbb0001852e7a,Monica Kaspar,"AVP, National Marketing Manager",verified,yes
+2026-08-27T05:02:48+00:00,JPMorgan Chase,54a7466674686975f8828725,Greg Schaub,EVP Sales,verified,yes
+2026-08-27T05:02:49+00:00,Fairway Independent,54a3b00b7468692cf055d40a,Chandler Hansen,Marketing Manager,verified,yes
+2026-08-27T05:02:50+00:00,Pulte Mortgage,6119f9e566da5200015c8d2d,Stephanie Redding,Director of Marketing,verified,yes
+2026-08-27T05:02:51+00:00,M/I Financial,54a29be874686935bef2762f,Derek Baker,Area President,verified,yes
