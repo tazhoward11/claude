@@ -179,3 +179,14 @@ timestamp,company,person_id,name,title,email_status,new_credit_spend
 2026-08-27T05:02:49+00:00,Fairway Independent,54a3b00b7468692cf055d40a,Chandler Hansen,Marketing Manager,verified,yes
 2026-08-27T05:02:50+00:00,Pulte Mortgage,6119f9e566da5200015c8d2d,Stephanie Redding,Director of Marketing,verified,yes
 2026-08-27T05:02:51+00:00,M/I Financial,54a29be874686935bef2762f,Derek Baker,Area President,verified,yes
+2026-08-27T05:07:49+00:00,U.S. Bank,609ecdb8410eb100017cedf8,Jason Bettini,"Senior Vice President, Business Enablement",verified,yes
+2026-08-27T05:07:50+00:00,U.S. Bank,5ac8f2a5a6da983fa1503be2,Maritza Hernandez,Vice President,verified,yes
+2026-08-27T05:07:51+00:00,Pennymac,611b469906664a0001c0a5a0,Brian Goodrich,First Vice President,verified,yes
+2026-08-27T05:07:51+00:00,Pennymac,54a302c77468693fda62964d,Maddie Stigler,VP Engineering,unavailable,yes
+2026-08-27T05:07:52+00:00,Paramount Residential,54aa9c667468690b755d180e,Leslie Inman,Associate Director of Strategic Operations,verified,yes
+2026-08-27T05:07:53+00:00,Paramount Residential,61022f9582b80700013b1fd2,Don Miller,Branch/Sales Manager,verified,yes
+2026-08-27T05:07:54+00:00,CLM Mortgage,66f5a0745fab7a0001c4c800,Erika Worden,Producing Branch Manager,unavailable,yes
+2026-08-27T05:07:55+00:00,Crosscountry Mortgage,66a6bc19a6f82e0001b7745b,Julie Steakley,Business Development Manager,verified,yes
+2026-08-27T05:07:55+00:00,Newrez,54a9eea8746869334aed1f1c,Madhavi Chadalawada,Senior Product Manager,extrapolated,yes
+2026-08-27T05:07:56+00:00,Newrez,54ab51a5746869084bbb8602,Angie Chadwick,Wholesale Account Executive,verified,yes
+2026-08-27T05:07:57+00:00,JET Homeloans,5f7006b49ab12c0001a88e6e,Megan Goodson,Team Mortgage Loan Originator,verified,yes
