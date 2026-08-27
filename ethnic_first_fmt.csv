@@ -1,0 +1,14 @@
+company,matched_as,tier,name,title,linkedin_url,email,email_status,guessed_format,note
+Third Ear,Third Ear (pinned to wearethirdear.com),recruiting,Robin Flynn,Human Resources Manager,,robin@wearethirdear.com,verified,first,
+Third Ear,Third Ear (pinned to wearethirdear.com),recruiting,Stephany Bogan,HR Manager,,stephany@wearethirdear.com,verified,first,
+Third Ear,Third Ear (pinned to wearethirdear.com),decision_maker,Alejandro Ru***s,Founder & CEO,,alejandro@wearethirdear.com,predicted (not verified),first,"surname masked but format is first-name-only, applied for free, no credit spent"
+Third Ear,Third Ear (pinned to wearethirdear.com),decision_maker,Serge Fl***s,Chief Creative Officer (CCO),,serge@wearethirdear.com,predicted (not verified),first,"surname masked but format is first-name-only, applied for free, no credit spent"
+Third Ear,Third Ear (pinned to wearethirdear.com),decision_maker,Charles Ne***r,"SVP, Director of Client Growth",,charles@wearethirdear.com,predicted (not verified),first,"surname masked but format is first-name-only, applied for free, no credit spent"
+Third Ear,Third Ear (pinned to wearethirdear.com),decision_maker,Cailin Bu***a,"SVP, Connections + Media",,cailin@wearethirdear.com,predicted (not verified),first,"surname masked but format is first-name-only, applied for free, no credit spent"
+Third Ear,Third Ear (pinned to wearethirdear.com),decision_maker,Scott Ra***k,Chief Financial Officer,,scott@wearethirdear.com,predicted (not verified),first,"surname masked but format is first-name-only, applied for free, no credit spent"
+Third Ear,Third Ear (pinned to wearethirdear.com),decision_maker,Carla Mo***a,Associate Media Director,,carla@wearethirdear.com,predicted (not verified),first,"surname masked but format is first-name-only, applied for free, no credit spent"
+Third Ear,Third Ear (pinned to wearethirdear.com),decision_maker,Jeff Ma***z,Associate Media Director,,jeff@wearethirdear.com,predicted (not verified),first,"surname masked but format is first-name-only, applied for free, no credit spent"
+The Personnel Store,The Personnel Store (pinned to thepersonnelstore.com),recruiting+marketing,Mac Cunningham,Recruiting and Communications Manager,,mac@thepersonnelstore.com,verified,first,
+The Personnel Store,The Personnel Store (pinned to thepersonnelstore.com),decision_maker,Scott Cunningham,President & CEO,,scott@thepersonnelstore.com,verified,first,
+The Personnel Store,The Personnel Store (pinned to thepersonnelstore.com),decision_maker,Eva Cr***z,Director of Housekeeping,,eva@thepersonnelstore.com,predicted (not verified),first,"surname masked but format is first-name-only, applied for free, no credit spent"
+The Personnel Store,The Personnel Store (pinned to thepersonnelstore.com),decision_maker,Travis Cu***m,Director of Business Development,,travis@thepersonnelstore.com,predicted (not verified),first,"surname masked but format is first-name-only, applied for free, no credit spent"

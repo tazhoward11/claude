@@ -369,17 +369,31 @@ def resolve_candidate(candidate: dict, apollo_people: list[dict]) -> tuple[dict 
     return None, f"AMBIGUOUS - {len(hits)} different people match ({names}); title didn't disambiguate, skipped"
 
 
+# Formats whose local part never touches the surname. When one of these is
+# confirmed for a domain, Apollo's last-name masking stops mattering - the first
+# name alone is enough to build the address, so a masked "Alejandro Ru***s" is
+# just as usable as an unmasked one.
+LAST_NAME_FREE_FORMATS = {"first"}
+
+
 def apply_known_format(first: str, last: str, domain: str, fmt: str) -> str | None:
     """Build a predicted email for a known full name using an already-confirmed format."""
     f, l = (first or "").strip().lower(), (last or "").strip().lower()
-    if not f or not l or not domain:
+    if not f or not domain:
         return None
+    if not l and fmt not in LAST_NAME_FREE_FORMATS:
+        return None
+    # Lambdas, not an eagerly-built dict: with a first-name-only format the surname
+    # is legitimately empty, and eager f-strings would index l[0] and blow up.
     builders = {
-        "first.last": f"{f}.{l}", "firstlast": f"{f}{l}", "flast": f"{f[0]}{l}",
-        "firstl": f"{f}{l[0]}", "first_last": f"{f}_{l}", "f.last": f"{f[0]}.{l}",
-        "last.first": f"{l}.{f}", "lastf": f"{l}{f[0]}", "first": f, "last": l,
+        "first.last": lambda: f"{f}.{l}", "firstlast": lambda: f"{f}{l}",
+        "flast": lambda: f"{f[0]}{l}", "firstl": lambda: f"{f}{l[0]}",
+        "first_last": lambda: f"{f}_{l}", "f.last": lambda: f"{f[0]}.{l}",
+        "last.first": lambda: f"{l}.{f}", "lastf": lambda: f"{l}{f[0]}",
+        "first": lambda: f, "last": lambda: l,
     }
-    local = builders.get(fmt)
+    builder = builders.get(fmt)
+    local = builder() if builder else None
     return f"{local}@{domain}" if local else None
 
 
@@ -509,13 +523,24 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
                 if row["email"]:
                     continue
                 last_masked = p.get("last_name_obfuscated") or ""
-                if last_masked and "*" not in last_masked:
-                    predicted = apply_known_format(p.get("first_name"), last_masked, confirmed_domain, confirmed_format)
-                    if predicted:
-                        row["email"] = predicted
-                        row["email_status"] = "predicted (not verified)"
-                        row["guessed_format"] = confirmed_format
-                        row["note"] = "name not obfuscated by Apollo, format applied for free, no credit spent"
+                unmasked = bool(last_masked) and "*" not in last_masked
+                # A first-name-only format needs no surname at all, so masked people
+                # are still reachable for free. Without this, the sample would burn
+                # its credits on whoever happened to come back unmasked and leave the
+                # actual decision makers blank - at Third Ear that meant two HR
+                # managers got emails while the Founder/CEO, CCO, CFO and both SVPs
+                # came back empty on a domain we had already fully cracked.
+                if not unmasked and confirmed_format not in LAST_NAME_FREE_FORMATS:
+                    continue
+                predicted = apply_known_format(p.get("first_name"), last_masked if unmasked else "",
+                                                confirmed_domain, confirmed_format)
+                if predicted:
+                    row["email"] = predicted
+                    row["email_status"] = "predicted (not verified)"
+                    row["guessed_format"] = confirmed_format
+                    row["note"] = ("name not obfuscated by Apollo, format applied for free, no credit spent"
+                                    if unmasked else
+                                    "surname masked but format is first-name-only, applied for free, no credit spent")
 
         # Apply the confirmed format to any full names you already know, for free -
         # but only after cross-validating each one against Apollo's own obfuscated

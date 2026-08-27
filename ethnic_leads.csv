@@ -1,0 +1,50 @@
+company,matched_as,tier,name,title,linkedin_url,email,email_status,guessed_format,note
+CarbonBetter,CarbonBetter (pinned to carbonbetter.com),decision_maker,Natalie Butler,Vice President of Retail Energy,,natalie.butler@carbonbetter.com,verified,first.last,
+CarbonBetter,CarbonBetter (pinned to carbonbetter.com),decision_maker,Matt Hendren,Director of Strategic Ventures,,matt.hendren@carbonbetter.com,verified,first.last,
+CarbonBetter,CarbonBetter (pinned to carbonbetter.com),decision_maker,Laura Al***r,Head of Retail Energy,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+CarbonBetter,CarbonBetter (pinned to carbonbetter.com),decision_maker,Tri Vo,Founder,,tri.vo@carbonbetter.com,predicted (not verified),first.last,"name not obfuscated by Apollo, format applied for free, no credit spent"
+Austin Underground,Austin Underground (pinned to austinunderground.org),decision_maker,Marena Gallo,Creative Director,,,unavailable,,
+Austin Underground,Austin Underground (pinned to austinunderground.org),decision_maker,Kenna Tolman,Photography Head,,,unavailable,,
+Journeyman Group,Journeyman Group (pinned to journeymangroup.com),marketing+decision_maker,Kaleigh Laduca,Marketing Director,,kladuca@journeymangroup.com,verified,flast,
+Journeyman Group,Journeyman Group (pinned to journeymangroup.com),decision_maker,Juanita Kniaz,Owner & Bookkeeper,,jkniaz@journeymangroup.com,verified,flast,
+Journeyman Group,Journeyman Group (pinned to journeymangroup.com),decision_maker,David Gr***k,Vice President,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Journeyman Group,Journeyman Group (pinned to journeymangroup.com),decision_maker,Cannon Ki***e,Vice President Operations,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Journeyman Group,Journeyman Group (pinned to journeymangroup.com),decision_maker,Alexander Ha***y,Director of Safety,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Journeyman Group,Journeyman Group (pinned to journeymangroup.com),decision_maker,Sarah Ca***p,Senior Director of Community Relations,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Journeyman Group,Journeyman Group (pinned to journeymangroup.com),decision_maker,Marshall Wi***f,Corporate Safety Director,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Journeyman Group,Journeyman Group (pinned to journeymangroup.com),decision_maker,Duane Ed***s,"Director, Safety",,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Journeyman Group,Journeyman Group (pinned to journeymangroup.com),decision_maker,Judy Sm***h,Vice President,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Journeyman Group,Journeyman Group (pinned to journeymangroup.com),gatekeeper,Tiffany Fi***r,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+KLP Construction Supply,KLP Construction Supply (pinned to klpconstructionsupply.com),decision_maker,Nathali Parker,CEO and President,,np@klpsupply.com,verified,other (np),verified but domain 'klpsupply.com' doesn't match pinned 'klpconstructionsupply.com' - excluded from format voting
+KLP Construction Supply,KLP Construction Supply (pinned to klpconstructionsupply.com),decision_maker,Karen Rogers,COO,,kp@klpcommercial.com,verified,other (kp),verified but domain 'klpcommercial.com' doesn't match pinned 'klpconstructionsupply.com' - excluded from format voting
+KLP Construction Supply,KLP Construction Supply (pinned to klpconstructionsupply.com),decision_maker,Brandon Sc***h,Vice President of Project Management,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+The Personnel Store,The Personnel Store (pinned to thepersonnelstore.com),recruiting+marketing,Mac Cunningham,Recruiting and Communications Manager,,mac@thepersonnelstore.com,verified,first,
+The Personnel Store,The Personnel Store (pinned to thepersonnelstore.com),decision_maker,Scott Cunningham,President & CEO,,scott@thepersonnelstore.com,verified,first,
+The Personnel Store,The Personnel Store (pinned to thepersonnelstore.com),decision_maker,Eva Cr***z,Director of Housekeeping,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+The Personnel Store,The Personnel Store (pinned to thepersonnelstore.com),decision_maker,Travis Cu***m,Director of Business Development,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Third Ear,Third Ear (pinned to wearethirdear.com),recruiting,Robin Flynn,Human Resources Manager,,robin@wearethirdear.com,verified,first,
+Third Ear,Third Ear (pinned to wearethirdear.com),recruiting,Stephany Bogan,HR Manager,,stephany@wearethirdear.com,verified,first,
+Third Ear,Third Ear (pinned to wearethirdear.com),decision_maker,Alejandro Ru***s,Founder & CEO,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Third Ear,Third Ear (pinned to wearethirdear.com),decision_maker,Serge Fl***s,Chief Creative Officer (CCO),,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Third Ear,Third Ear (pinned to wearethirdear.com),decision_maker,Charles Ne***r,"SVP, Director of Client Growth",,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Third Ear,Third Ear (pinned to wearethirdear.com),decision_maker,Cailin Bu***a,"SVP, Connections + Media",,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Third Ear,Third Ear (pinned to wearethirdear.com),decision_maker,Scott Ra***k,Chief Financial Officer,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Third Ear,Third Ear (pinned to wearethirdear.com),decision_maker,Carla Mo***a,Associate Media Director,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Third Ear,Third Ear (pinned to wearethirdear.com),decision_maker,Jeff Ma***z,Associate Media Director,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Moore Clean,Moore Clean (pinned to moorecleantexas.com),decision_maker,Jose Moore,CEO,,josem@moorecleantexas.com,verified,firstl,
+Moore Clean,Moore Clean (pinned to moorecleantexas.com),decision_maker,Scott Oliver,CFO,,scotto@moorecleantexas.com,verified,firstl,
+CyberTex,CyberTex (pinned to cybertex.edu),decision_maker,Monika Whitaker,Director of Financial Aid,,monika.whitaker@cybertex.edu,verified,first.last,
+CyberTex,CyberTex (pinned to cybertex.edu),decision_maker,Monique Johnson,Chief Accounting Officer,,monique@cybertex.edu,verified,first,
+CyberTex,CyberTex (pinned to cybertex.edu),decision_maker,Veronica St***t,Director of Admissions,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+CyberTex,CyberTex (pinned to cybertex.edu),decision_maker,Emily Wi***n,Program Director,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+CyberTex,CyberTex (pinned to cybertex.edu),decision_maker,Tim Pu***n,IT DIrector,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Building Team Solutions,Building Team Solutions (pinned to btsjobs.com),marketing+decision_maker,Britanie Olvera,CMO- Chief Mission Officer (I Like IT Better Than CEO),,brit@btsjobs.com,verified,other (brit),
+Austin Staffing,Austin Staffing (pinned to austinstaffing.net),decision_maker,Chris Guaydacan,President,,chris@austinstaffing.net,verified,first,
+Express Commercial Cleaning,Express Commercial Cleaning (pinned to expresscommercialcleaning.com),decision_maker,Evelyn Tavernier,President,,evelyn@expresscommercialcleaning.com,verified,first,
+Express Commercial Cleaning,Express Commercial Cleaning (pinned to expresscommercialcleaning.com),decision_maker,Dan Tavernier,Operations Director,,dan@expresscommercialcleaning.com,verified,first,
+SmartTouch Interactive,SmartTouch Interactive (pinned to smarttouchinteractive.com),decision_maker,Robert Cowes,Co-Founder President,,rcowes@smarttouchinteractive.com,verified,flast,
+SmartTouch Interactive,SmartTouch Interactive (pinned to smarttouchinteractive.com),decision_maker,Aaron Fichera,Chief Operating Officer,,aaron@smarttouchinteractive.com,verified,first,
+SmartTouch Interactive,SmartTouch Interactive (pinned to smarttouchinteractive.com),decision_maker,Henry Me***o,Creative Director,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+SmartTouch Interactive,SmartTouch Interactive (pinned to smarttouchinteractive.com),decision_maker,Tanner Ro***s,Vice President of Marketing Services,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Neighborhood Plumbing and Drain,Neighborhood Plumbing and Drain (pinned to neighborhoodplumbinganddrain.com),decision_maker,Heberto Alanis,Co-Owner,,,unavailable,,
+Modular Installation Services,Modular Installation Services (pinned to modularinstall.com),decision_maker,Monica Gould,Vice President / CFO,,mpgould@modularinstall.com,verified,other (mpgould),
