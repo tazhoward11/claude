@@ -275,3 +275,39 @@ timestamp,company,person_id,name,title,email_status,new_credit_spend
 2026-08-27T05:55:00+00:00,SmartTouch Interactive,5f69d8a1dc46bf0001b5d5df,Aaron Fichera,Chief Operating Officer,verified,no (already revealed)
 2026-08-27T05:55:01+00:00,Neighborhood Plumbing and Drain,54a721a974686975f88d6218,Heberto Alanis,Co-Owner,unavailable,no (already revealed)
 2026-08-27T05:55:05+00:00,Modular Installation Services,66f68655f588730001ece7f6,Monica Gould,Vice President / CFO,verified,no (already revealed)
+2026-08-27T19:32:11+00:00,LoanPeople,611bba0fdf5d950001a50d41,Dana Leaman,Chief Marketing Officer,verified,yes
+2026-08-27T19:32:12+00:00,LoanPeople,6857ac1adf52d1000179c52f,Jennifer Corvino,Chief Operating Officer,verified,yes
+2026-08-27T19:32:13+00:00,Guild Mortgage Company LLC,66f584286ee25b0001d383b3,Eric Weiss,Senior Vice President,verified,yes
+2026-08-27T19:32:14+00:00,Guild Mortgage Company LLC,679a0f4391ec7d0001de6feb,Chad Overhauser,Senior Vice President,verified,yes
+2026-08-27T19:32:18+00:00,Fairway Independent Mortgage Corp.,54a5dd427468693b8c9f3caf,Daniel McHarness,"Digital Marketing Manager, Reverse Division",verified,yes
+2026-08-27T19:32:18+00:00,Fairway Independent Mortgage Corp.,54a3b00b7468692cf055d40a,Chandler Hansen,Marketing Manager,verified,no (already revealed)
+2026-08-27T19:32:20+00:00,Mission Mortgage of Texas Inc.,66f53f88e6a57100018a9161,Leighann McCoy,President| CEO,verified,yes
+2026-08-27T19:32:21+00:00,Mission Mortgage of Texas Inc.,66f302866381390001aa9115,Leigh McCoy,President,verified,yes
+2026-08-27T19:32:22+00:00,Vista Lending,54a55bb37468693676247391,Jennifer Cantrell,Office Manager,verified,yes
+2026-08-27T19:32:30+00:00,Austin Capital Mortgage Inc.,61109f2215ee4d0001dea58c,Kari Cooper,Head of Marketing & Brand,verified,yes
+2026-08-27T19:32:31+00:00,Austin Capital Mortgage Inc.,60befeb6305de000014be2a2,Rose Thompson,Marketing Manager,unavailable,yes
+2026-08-27T19:33:03+00:00,LoanPeople,611bba0fdf5d950001a50d41,Dana Leaman,Chief Marketing Officer,verified,no (already revealed)
+2026-08-27T19:33:03+00:00,LoanPeople,6857ac1adf52d1000179c52f,Jennifer Corvino,Chief Operating Officer,verified,no (already revealed)
+2026-08-27T19:33:05+00:00,Guild Mortgage Company LLC,66f584286ee25b0001d383b3,Eric Weiss,Senior Vice President,verified,no (already revealed)
+2026-08-27T19:33:05+00:00,Guild Mortgage Company LLC,679a0f4391ec7d0001de6feb,Chad Overhauser,Senior Vice President,verified,no (already revealed)
+2026-08-27T19:33:09+00:00,Fairway Independent Mortgage Corp.,54a5dd427468693b8c9f3caf,Daniel McHarness,"Digital Marketing Manager, Reverse Division",verified,no (already revealed)
+2026-08-27T19:33:10+00:00,Fairway Independent Mortgage Corp.,54a3b00b7468692cf055d40a,Chandler Hansen,Marketing Manager,verified,no (already revealed)
+2026-08-27T19:33:12+00:00,Mission Mortgage of Texas Inc.,66f53f88e6a57100018a9161,Leighann McCoy,President| CEO,verified,no (already revealed)
+2026-08-27T19:33:12+00:00,Mission Mortgage of Texas Inc.,66f302866381390001aa9115,Leigh McCoy,President,verified,no (already revealed)
+2026-08-27T19:33:14+00:00,Vista Lending,54a55bb37468693676247391,Jennifer Cantrell,Office Manager,verified,no (already revealed)
+2026-08-27T19:33:21+00:00,Austin Capital Mortgage Inc.,61109f2215ee4d0001dea58c,Kari Cooper,Head of Marketing & Brand,verified,no (already revealed)
+2026-08-27T19:33:22+00:00,Austin Capital Mortgage Inc.,60befeb6305de000014be2a2,Rose Thompson,Marketing Manager,unavailable,no (already revealed)
+2026-08-27T19:35:06+00:00,CMG Home Loans,66f8fbd4aa438700011847f4,Sean Kirksey,Vice President of Reverse Mortgage,verified,yes
+2026-08-27T19:35:07+00:00,CMG Home Loans,67fd4a8765c85f00017ad2b5,Andres Garcia,"Vice President, Experience Design",verified,yes
+2026-08-27T19:35:08+00:00,LoanPeople,611bba0fdf5d950001a50d41,Dana Leaman,Chief Marketing Officer,verified,no (already revealed)
+2026-08-27T19:35:09+00:00,LoanPeople,6857ac1adf52d1000179c52f,Jennifer Corvino,Chief Operating Officer,verified,no (already revealed)
+2026-08-27T19:35:10+00:00,Guild Mortgage Company LLC,66f584286ee25b0001d383b3,Eric Weiss,Senior Vice President,verified,no (already revealed)
+2026-08-27T19:35:11+00:00,Guild Mortgage Company LLC,679a0f4391ec7d0001de6feb,Chad Overhauser,Senior Vice President,verified,no (already revealed)
+2026-08-27T19:35:15+00:00,Fairway Independent Mortgage Corp.,54a5dd427468693b8c9f3caf,Daniel McHarness,"Digital Marketing Manager, Reverse Division",verified,no (already revealed)
+2026-08-27T19:35:15+00:00,Fairway Independent Mortgage Corp.,54a3b00b7468692cf055d40a,Chandler Hansen,Marketing Manager,verified,no (already revealed)
+2026-08-27T19:35:17+00:00,Mission Mortgage of Texas Inc.,66f53f88e6a57100018a9161,Leighann McCoy,President| CEO,verified,no (already revealed)
+2026-08-27T19:35:18+00:00,Mission Mortgage of Texas Inc.,66f302866381390001aa9115,Leigh McCoy,President,verified,no (already revealed)
+2026-08-27T19:35:19+00:00,Vista Lending,54a55bb37468693676247391,Jennifer Cantrell,Office Manager,verified,no (already revealed)
+2026-08-27T19:35:22+00:00,Highland Home Loans,63168a16e9fefc000161acfa,Melissa Otero,Director of Medical Records,unavailable,yes
+2026-08-27T19:35:28+00:00,Austin Capital Mortgage Inc.,61109f2215ee4d0001dea58c,Kari Cooper,Head of Marketing & Brand,verified,no (already revealed)
+2026-08-27T19:35:28+00:00,Austin Capital Mortgage Inc.,60befeb6305de000014be2a2,Rose Thompson,Marketing Manager,unavailable,no (already revealed)

@@ -1,0 +1,31 @@
+company,matched_as,tier,name,title,linkedin_url,email,email_status,guessed_format,note
+CMG Home Loans,CMG Home Loans (pinned to cmgfi.com),decision_maker,Sean Kirksey,Vice President of Reverse Mortgage,,skirksey@cmgfi.com,verified,flast,
+CMG Home Loans,CMG Home Loans (pinned to cmgfi.com),decision_maker,Andres Garcia,"Vice President, Experience Design",,agarcia@cmgfi.com,verified,flast,
+CMG Home Loans,CMG Home Loans (pinned to cmgfi.com),decision_maker,Jennifer Ho***n,SVP,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+LoanPeople,LoanPeople (pinned to loanpeople.com),marketing+decision_maker,Dana Leaman,Chief Marketing Officer,,dana.leaman@loanpeople.com,verified,first.last,
+LoanPeople,LoanPeople (pinned to loanpeople.com),decision_maker,Jennifer Corvino,Chief Operating Officer,,jennifer.corvino@loanpeople.com,verified,first.last,
+Guild Mortgage Company LLC,Guild Mortgage Company LLC (pinned to guildmortgage.com),decision_maker,Eric Weiss,Senior Vice President,,eweiss@guildmortgage.net,verified,flast,verified but domain 'guildmortgage.net' doesn't match pinned 'guildmortgage.com' - excluded from format voting
+Guild Mortgage Company LLC,Guild Mortgage Company LLC (pinned to guildmortgage.com),decision_maker,Chad Overhauser,Senior Vice President,,coverhauser@guildmortgage.net,verified,flast,verified but domain 'guildmortgage.net' doesn't match pinned 'guildmortgage.com' - excluded from format voting
+Guild Mortgage Company LLC,Guild Mortgage Company LLC (pinned to guildmortgage.com),decision_maker,Erin Wa***s,"Vice President, Product Strategy",,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Guild Mortgage Company LLC,Guild Mortgage Company LLC (pinned to guildmortgage.com),decision_maker,Rachel Fo***r,"Vice President, Quality & Risk Management",,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Guild Mortgage Company LLC,Guild Mortgage Company LLC (pinned to guildmortgage.com),marketing,Kira Bu***y,Marketing Design Supervisor,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Guild Mortgage Company LLC,Guild Mortgage Company LLC (pinned to guildmortgage.com),decision_maker,Paul Me***s,Director of Information Security,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Guild Mortgage Company LLC,Guild Mortgage Company LLC (pinned to guildmortgage.com),decision_maker,Cailin To***u,Licensed Mortgage Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Guild Mortgage Company LLC,Guild Mortgage Company LLC (pinned to guildmortgage.com),gatekeeper,Susan Du***t,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Fairway Independent Mortgage Corp.,Fairway Independent Mortgage Corp.,marketing,Daniel McHarness,"Digital Marketing Manager, Reverse Division",,daniel.mcharness@fairwaymc.com,verified,first.last,
+Fairway Independent Mortgage Corp.,Fairway Independent Mortgage Corp.,marketing,Chandler Hansen,Marketing Manager,,chandler.hansen@fairwaymc.com,verified,first.last,
+Fairway Independent Mortgage Corp.,Fairway Independent Mortgage Corp.,gatekeeper,Robin Tu***b,Office Manager,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Mission Mortgage of Texas Inc.,Mission Mortgage of Texas Inc. (pinned to missionmortgage.com),decision_maker,Leighann McCoy,President| CEO,,lmccoy@missionmortgage.com,verified,flast,
+Mission Mortgage of Texas Inc.,Mission Mortgage of Texas Inc. (pinned to missionmortgage.com),decision_maker,Leigh McCoy,President,,lamccoy@missionmortgage.com,verified,other (lamccoy),
+Mission Mortgage of Texas Inc.,Mission Mortgage of Texas Inc. (pinned to missionmortgage.com),decision_maker,Michael Mc***y,Senior Vice President,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Mission Mortgage of Texas Inc.,Mission Mortgage of Texas Inc. (pinned to missionmortgage.com),marketing,Joanna Ru***a,Marketing Manager,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Mission Mortgage of Texas Inc.,Mission Mortgage of Texas Inc. (pinned to missionmortgage.com),marketing,Tannon Hi***s,Secondary Marketing Manager,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Mission Mortgage of Texas Inc.,Mission Mortgage of Texas Inc. (pinned to missionmortgage.com),decision_maker,Diana Va***t,Chief Financial Officer,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Mission Mortgage of Texas Inc.,Mission Mortgage of Texas Inc. (pinned to missionmortgage.com),decision_maker,Lesley Gu***o,Director of Mortgage Operations,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Mission Mortgage of Texas Inc.,Mission Mortgage of Texas Inc. (pinned to missionmortgage.com),decision_maker,Terri Mi***s,V.P. Operations,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Vista Lending,Vista Lending (pinned to vistaaustin.com),gatekeeper,Jennifer Cantrell,Office Manager,,jennifer@vistaaustin.com,verified,first,
+Highland Home Loans,Highland Home Loans,decision_maker,Melissa Otero,Director of Medical Records,,,unavailable,,
+Austin Capital Mortgage Inc.,Austin Capital Mortgage,marketing+decision_maker,Kari Cooper,Head of Marketing & Brand,,kari@austincapitalmortgage.com,verified,first,
+Austin Capital Mortgage Inc.,Austin Capital Mortgage,marketing,Rose Thompson,Marketing Manager,,rose@austincapitalmortgage.com,predicted (not verified),first,"surname masked but format is first-name-only, applied for free, no credit spent"
+Austin Capital Mortgage Inc.,Austin Capital Mortgage,gatekeeper,Ashley Co***r,Office Manager,,ashley@austincapitalmortgage.com,predicted (not verified),first,"surname masked but format is first-name-only, applied for free, no credit spent"
+Austin Capital Mortgage Inc.,Austin Capital Mortgage,gatekeeper,Nikki An***n,Office Manager,,nikki@austincapitalmortgage.com,predicted (not verified),first,"surname masked but format is first-name-only, applied for free, no credit spent"
