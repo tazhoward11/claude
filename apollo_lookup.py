@@ -126,6 +126,45 @@ TITLE_PENALTIES = [
 ]
 
 
+def load_already_have(path: str) -> dict:
+    """company -> [(first, last), ...] of people already being emailed.
+
+    Rows are company,first,last (extra columns ignored). These people are
+    dropped before enrichment, so a "who else is there" run neither pays a
+    credit nor spends a per-company slot on someone already on the list.
+    """
+    have = defaultdict(list)
+    with open(path, newline="") as f:
+        for parts in csv.reader(f):
+            parts = [x.strip() for x in parts]
+            if len(parts) >= 3 and parts[0] and parts[1]:
+                have[parts[0]].append((parts[1].lower(), parts[2].lower()))
+    return have
+
+
+def already_have_person(person: dict, have: list) -> bool:
+    """True if Apollo's person is someone on the already-have list.
+
+    Apollo masks surnames (Pinh****), so the surname is compared on its
+    visible prefix only - never reconstructed. First name must match exactly,
+    which keeps a prefix collision from dropping a different person.
+    """
+    first = (person.get("first_name") or "").strip().lower()
+    masked = (person.get("last_name_obfuscated") or "").strip().lower()
+    visible = masked.split("*")[0]
+    for have_first, have_last in have:
+        if first != have_first:
+            continue
+        if not masked or not have_last:
+            return True
+        if "*" not in masked:
+            if masked == have_last:
+                return True
+        elif visible and have_last.startswith(visible):
+            return True
+    return False
+
+
 def rank_person(person: dict, tiers: dict, marketing_first: bool = False) -> tuple:
     """Sort key putting the likeliest budget holder first.
 
@@ -467,7 +506,7 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
         enrich: bool, out_path: str, max_pages: int, sample_size: int, known_names_path: str | None,
         company_domains_path: str | None = None, max_credits: int | None = None,
         quiet: bool = False, per_company: int = DEFAULT_PER_COMPANY,
-        marketing_first: bool = False):
+        marketing_first: bool = False, already_have_path: str | None = None):
     def say(msg):
         if not quiet:
             print(msg)
@@ -492,6 +531,8 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
                 if len(parts) >= 2 and parts[1]:
                     company_domains[parts[0]] = parts[1]
 
+    already_have = load_already_have(already_have_path) if already_have_path else {}
+
     revealed_ids = load_previously_revealed_ids()
     run_new_spend = 0
 
@@ -509,6 +550,12 @@ def run(companies: list[str], tiers: dict, locations: list[str], api_key: str,
         # of a company's credits on two HR managers while the CEO goes unenriched
         # is how this used to waste a batch.
         people.sort(key=lambda p: rank_person(p, tiers, marketing_first))
+
+        have = already_have.get(company, [])
+        if have:
+            kept = [p for p in people if not already_have_person(p, have)]
+            say(f"  dropped {len(people) - len(kept)} already on your list")
+            people = kept
 
         confirmed_domain = None
         confirmed_format = None
@@ -1050,6 +1097,9 @@ def main():
                              "Already-revealed people are free and don't count.")
     parser.add_argument("--per-company", type=int, default=DEFAULT_PER_COMPANY,
                         help=f"Max contacts per company on the Contacts tab (default {DEFAULT_PER_COMPANY})")
+    parser.add_argument("--already-have",
+                        help="Path to a CSV (company,first,last) of people you already email. They "
+                             "are dropped before enrichment, so the run returns only new names")
     parser.add_argument("--marketing-first", action="store_true",
                         help="Rank the marketing contact ahead of the decision makers, instead of "
                              "seniority-first. Use when the ask is 'the marketing person, then the "
@@ -1131,7 +1181,7 @@ def main():
         out_path=args.out, max_pages=args.max_pages, sample_size=args.sample_size,
         known_names_path=args.known_names, company_domains_path=args.company_domains,
         max_credits=args.max_credits, quiet=args.quiet, per_company=args.per_company,
-        marketing_first=args.marketing_first)
+        marketing_first=args.marketing_first, already_have_path=args.already_have)
 
 
 if __name__ == "__main__":
