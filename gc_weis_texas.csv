@@ -1,0 +1,3 @@
+company,matched_as,tier,name,title,linkedin_url,email,email_status,guessed_format,note
+Weis Builders,Weis Builders (pinned to 54a11bc369702d8ed42f5a00),decision_maker,Paul Coplen,Vice President,,paulcoplen@weisbuilders.com,verified,firstlast,verified but domain 'weisbuilders.com' doesn't match pinned '54a11bc369702d8ed42f5a00' - excluded from format voting
+Weis Builders,Weis Builders (pinned to 54a11bc369702d8ed42f5a00),decision_maker,Thomas Borrego,Director of Pre-Construction,,,unavailable,,

@@ -294,6 +294,9 @@ def search_people_with_fallback(api_key: str, company: str, locations: list[str]
     return [], company
 
 
+APOLLO_ORG_ID_RE = re.compile(r"[0-9a-f]{24}")
+
+
 def search_people(api_key: str, company: str, locations: list[str], titles: list[str] | None = None,
                    seniorities: list[str] | None = None, include_similar_titles: bool = True,
                    per_page: int = 25, max_pages: int = 4, domain: str | None = None,
@@ -306,7 +309,12 @@ def search_people(api_key: str, company: str, locations: list[str], titles: list
             "page": page,
             "per_page": per_page,
         }
-        if domain:
+        if domain and APOLLO_ORG_ID_RE.fullmatch(domain):
+            # An Apollo organization id pasted from an app.apollo.io URL pins the
+            # company exactly, which beats a domain when a firm's people are
+            # spread across several domains.
+            payload["organization_ids"] = [domain]
+        elif domain:
             payload["q_organization_domains_list"] = [domain]
         else:
             payload["q_organization_name"] = company
