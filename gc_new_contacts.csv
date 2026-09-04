@@ -1,0 +1,57 @@
+company,matched_as,tier,name,title,linkedin_url,email,email_status,guessed_format,note
+American Constructors,American Constructors (pinned to americanconstructors.com),decision_maker,Marty Burger,Chief Executive Officer,,mburger@americanconstructors.com,verified,flast,
+American Constructors,American Constructors (pinned to americanconstructors.com),decision_maker,Joe Charlton,Chief Operating Officer,,jcharlton@americanconstructors.com,verified,flast,
+American Constructors,American Constructors (pinned to americanconstructors.com),decision_maker,Albert Al***n,Company Director,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+American Constructors,American Constructors (pinned to americanconstructors.com),decision_maker,Brian Pl***s,Director of Special Projects,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+American Constructors,American Constructors (pinned to americanconstructors.com),decision_maker,Dan Ho***n,Project Director,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+American Constructors,American Constructors (pinned to americanconstructors.com),decision_maker,Grant Hu***n,Project Director,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+American Constructors,American Constructors (pinned to americanconstructors.com),gatekeeper,Kim Wi***r,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Cadence McShane Construction,Cadence McShane Construction (pinned to cadencemcshane.com),decision_maker,Srinath Kasturi,Executive Vice President,,skasturi@cadencemcshane.com,verified,flast,
+Cadence McShane Construction,Cadence McShane Construction (pinned to cadencemcshane.com),decision_maker,Tyler Earle,Vice President | Business Unit Leader,,tearle@cadencemcshane.com,verified,flast,
+Cadence McShane Construction,Cadence McShane Construction (pinned to cadencemcshane.com),decision_maker,Ron Wo***d,Director of Construction Management Services,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Cadence McShane Construction,Cadence McShane Construction (pinned to cadencemcshane.com),decision_maker,Kevin Cu***s,Director of Preconstruction Services,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Austin Industries,Austin Industries (pinned to austin-ind.com),decision_maker,David Yeagy,President,,dyeagy@austin-ind.com,verified,flast,
+Austin Industries,Austin Industries (pinned to austin-ind.com),decision_maker,William McAdoo,President,,mcadoow@austinindl.com,verified,lastf,verified but domain 'austinindl.com' doesn't match pinned 'austin-ind.com' - excluded from format voting
+Austin Industries,Austin Industries (pinned to austin-ind.com),decision_maker,Jack Ar***r,Senior Vice President Operations Central Texas Division,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Austin Industries,Austin Industries (pinned to austin-ind.com),decision_maker,Marcus Fl***e,Vice President,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Austin Industries,Austin Industries (pinned to austin-ind.com),decision_maker,Alex Fl***g,Director of Business Development,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Austin Industries,Austin Industries (pinned to austin-ind.com),decision_maker,Caroline Tr***o,Project Controls Director,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Austin Industries,Austin Industries (pinned to austin-ind.com),gatekeeper,Marili Al***z,Field Office Manager,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Austin Industries,Austin Industries (pinned to austin-ind.com),gatekeeper,Lisa An***n,Field Office Manager,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Austin Industries,Austin Industries (pinned to austin-ind.com),gatekeeper,Pamela Ba***l,Field Office Manager,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Austin Industries,Austin Industries (pinned to austin-ind.com),gatekeeper,Lesley Gi***e,Executive Assistant,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Satterfield & Pontikes,Satterfield & Pontikes (pinned to satpon.com),decision_maker,Calen Shearer,Vice President,,cshearer@satpon.com,verified,flast,
+Satterfield & Pontikes,Satterfield & Pontikes (pinned to satpon.com),decision_maker,Brad Shearer,Vice President,,bshearer@satpon.com,verified,flast,
+Satterfield & Pontikes,Satterfield & Pontikes (pinned to satpon.com),decision_maker,Alan Mo***y,Director of Preconstruction,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+NOVO Construction,NOVO Construction (pinned to novoconstruction.com),marketing,Danielle Fonseca,Marketing Manager,,dfonseca@novoconstruction.com,verified,flast,
+Swinerton,Swinerton (pinned to swinerton.com),decision_maker,Alison Satt,"Vice President, Division Manager",,asatt@swinerton.com,verified,flast,
+Swinerton,Swinerton (pinned to swinerton.com),marketing,Sara Ballard,Senior Internal Communications Manager,,sara.ballard@swinerton.com,verified,first.last,
+Adolfson & Peterson,Adolfson & Peterson (pinned to a-p.com),decision_maker,Amber Autumn,Director of Business Development,,aautumn@a-p.com,verified,flast,
+Wurzel Builders,Wurzel Builders (pinned to wurzelbuilders.com),decision_maker,Brenda Jones,Senior Director Business Development,,brenda.jones@wurzelbuilders.com,verified,first.last,
+Wurzel Builders,Wurzel Builders (pinned to wurzelbuilders.com),decision_maker,John Mitchell,VP Field Ops,,john.mitchell@wurzelbuilders.com,verified,first.last,
+ZapalacReed Construction,ZapalacReed Construction (pinned to zapalacreed.com),decision_maker,Bill Zapalac,Senior Vice President,,bz@zapalacreed.com,verified,other (bz),
+ZapalacReed Construction,ZapalacReed Construction (pinned to zapalacreed.com),decision_maker,Hector Lopez,Vice President,,hl@zapalacreed.com,verified,other (hl),
+ZapalacReed Construction,ZapalacReed Construction (pinned to zapalacreed.com),decision_maker,H Lo,Vice President,,,,,name not obfuscated by Apollo (free); email pending format confirmation
+Roers Companies,Roers Companies (pinned to roerscompanies.com),decision_maker,Ray Castillo,Director of Business Development,,ray.castillo@roerscompanies.com,verified,first.last,
+Lott Brothers,Lott Brothers (pinned to lottbrothers.com),decision_maker,Barrett Schulz,Vice President,,barretts@lottbrothers.com,verified,firstl,
+Lott Brothers,Lott Brothers (pinned to lottbrothers.com),decision_maker,Joseph Norrell,Chief Financial Officer,,josephn@lottbrothers.com,verified,firstl,
+Legacy MCS,Legacy MCS (pinned to legacymcs.com),decision_maker,Gregory Cole,Director of Construction,,gregory@legacymcs.com,verified,first,
+Legacy MCS,Legacy MCS (pinned to legacymcs.com),decision_maker,Renee Er***t,VP of Admin,,renee@legacymcs.com,predicted (not verified),first,"surname masked but format is first-name-only, applied for free, no credit spent"
+HITT Contracting,HITT Contracting (pinned to hitt.com),decision_maker,Jennifer Ma***s,Vice President and Business Unit Leader,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+HITT Contracting,HITT Contracting (pinned to hitt.com),decision_maker,Colby Ce***a,Human Resources Business Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Rand Construction,Rand Construction (pinned to randcc.com),decision_maker,Ryan Mc***n,Director,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Rand Construction,Rand Construction (pinned to randcc.com),decision_maker,Zachary Cl***y,Director of Field Operations,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Rand Construction,Rand Construction (pinned to randcc.com),decision_maker,Matt Da***h,Principal,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Gordon Highlander,Gordon Highlander (pinned to gordonhighlander.com),decision_maker,Lee Sa***r,Vice President Business Development,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Gordon Highlander,Gordon Highlander (pinned to gordonhighlander.com),decision_maker,Brian Ja***t,Vice President of Business Development,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Gordon Highlander,Gordon Highlander (pinned to gordonhighlander.com),decision_maker,Pam Do***n,Vice President of Strategic Partner Relationships,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Gordon Highlander,Gordon Highlander (pinned to gordonhighlander.com),decision_maker,Kyle Hu***t,Director of Operations,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Gordon Highlander,Gordon Highlander (pinned to gordonhighlander.com),decision_maker,Stephanie Bo***l,Associate Director of Preconstruction,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Gordon Highlander,Gordon Highlander (pinned to gordonhighlander.com),marketing+decision_maker,Heidi Ma***e,"Project Coordinator, Marketing Director",,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Andres Construction,Andres Construction (pinned to andresconstruction.com),decision_maker,Tom Fe***r,VP,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Headwater Construction,Headwater Construction (pinned to hw-companies.com),decision_maker,Caren Wi***h,Vice President,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Headwater Construction,Headwater Construction (pinned to hw-companies.com),marketing,Jennifer Fe***s,Marketing Manager,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Headwater Construction,Headwater Construction (pinned to hw-companies.com),decision_maker,Anson Wa***g,Director of Construction,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Headwater Construction,Headwater Construction (pinned to hw-companies.com),decision_maker,Wade Ba***r,Director of Engineering,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Headwater Construction,Headwater Construction (pinned to hw-companies.com),decision_maker,Michael Jo***n,Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Headwater Construction,Headwater Construction (pinned to hw-companies.com),decision_maker,Logan Wa***s,VP of Capital Relations,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
