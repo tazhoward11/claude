@@ -331,3 +331,31 @@ timestamp,company,person_id,name,title,email_status,new_credit_spend
 2026-09-04T21:49:13+00:00,Lott Brothers,66f27d4b306bc10001f8fc9a,Barrett Schulz,Vice President,verified,yes
 2026-09-04T21:49:14+00:00,Lott Brothers,658e62b1974da00001b9d564,Joseph Norrell,Chief Financial Officer,verified,yes
 2026-09-04T21:49:15+00:00,Legacy MCS,5b3cf8e1a6da98a155d2d5a9,Gregory Cole,Director of Construction,verified,yes
+2026-09-04T21:49:52+00:00,American Constructors,60e7075df6de7500018be460,Marty Burger,Chief Executive Officer,verified,no (already revealed)
+2026-09-04T21:49:53+00:00,American Constructors,656846a70e3f3400017a1725,Joe Charlton,Chief Operating Officer,verified,no (already revealed)
+2026-09-04T21:49:55+00:00,Cadence McShane Construction,54c1af177468691639975435,Srinath Kasturi,Executive Vice President,verified,no (already revealed)
+2026-09-04T21:49:55+00:00,Cadence McShane Construction,54a40fc27468693b8ced2929,Tyler Earle,Vice President | Business Unit Leader,verified,no (already revealed)
+2026-09-04T21:49:57+00:00,Austin Industries,54a74eeb74686975f88bb528,David Yeagy,President,verified,no (already revealed)
+2026-09-04T21:49:57+00:00,Austin Industries,64ef18b72ef3b00001e5f473,William McAdoo,President,verified,no (already revealed)
+2026-09-04T21:49:59+00:00,Satterfield & Pontikes,54a182e569702d939bfe8802,Calen Shearer,Vice President,verified,no (already revealed)
+2026-09-04T21:49:59+00:00,Satterfield & Pontikes,54a78eab7468696220af1640,Brad Shearer,Vice President,verified,no (already revealed)
+2026-09-04T21:50:01+00:00,NOVO Construction,5d5aba2d80f93e760d53c4fe,Danielle Fonseca,Marketing Manager,verified,no (already revealed)
+2026-09-04T21:50:02+00:00,Swinerton,684573673e63c500013a448c,Alison Satt,"Vice President, Division Manager",verified,no (already revealed)
+2026-09-04T21:50:03+00:00,Swinerton,54a70bd47468696de7af4610,Sara Ballard,Senior Internal Communications Manager,verified,no (already revealed)
+2026-09-04T21:50:06+00:00,Adolfson & Peterson,57de5868a6da987b65e81f32,Amber Autumn,Director of Business Development,verified,no (already revealed)
+2026-09-04T21:50:07+00:00,Wurzel Builders,613ad7059f893c0001c6abbd,Brenda Jones,Senior Director Business Development,verified,no (already revealed)
+2026-09-04T21:50:08+00:00,Wurzel Builders,6814af694ee4dd00010a5062,John Mitchell,VP Field Ops,verified,no (already revealed)
+2026-09-04T21:50:09+00:00,ZapalacReed Construction,55ca4df5f3e5bb078200183c,Bill Zapalac,Senior Vice President,verified,no (already revealed)
+2026-09-04T21:50:10+00:00,ZapalacReed Construction,5b1ad5bfa6da9828db05035d,Hector Lopez,Vice President,verified,no (already revealed)
+2026-09-04T21:50:11+00:00,Roers Companies,66fc164054e6ee0001752e3e,Ray Castillo,Director of Business Development,verified,no (already revealed)
+2026-09-04T21:50:12+00:00,Lott Brothers,66f27d4b306bc10001f8fc9a,Barrett Schulz,Vice President,verified,no (already revealed)
+2026-09-04T21:50:13+00:00,Lott Brothers,658e62b1974da00001b9d564,Joseph Norrell,Chief Financial Officer,verified,no (already revealed)
+2026-09-04T21:50:15+00:00,Legacy MCS,5b3cf8e1a6da98a155d2d5a9,Gregory Cole,Director of Construction,verified,no (already revealed)
+2026-09-04T21:50:15+00:00,Legacy MCS,67baeb6e58e30300015b4ae7,Renee Ernst,VP of Admin,verified,yes
+2026-09-04T21:50:17+00:00,HITT Contracting,64ef230a0ba0f900019fe529,Jennifer Macks,Vice President and Business Unit Leader,verified,yes
+2026-09-04T21:50:17+00:00,HITT Contracting,681f1960ba83760001608c65,Colby Cerelejia,Human Resources Business Partner,unavailable,yes
+2026-09-04T21:50:19+00:00,Rand Construction,609b46c313c03b00011c6350,Ryan McGovern,Director,verified,yes
+2026-09-04T21:50:19+00:00,Rand Construction,54c2907d7468697af7c05aaa,Zachary Clardy,Director of Field Operations,verified,yes
+2026-09-04T21:50:23+00:00,Gordon Highlander,68626c5a9da67c0001d2d2be,Lee Sawyer,Vice President Business Development,verified,yes
+2026-09-04T21:50:23+00:00,Gordon Highlander,54a126c369702d8eeb856400,Brian Jarrett,Vice President of Business Development,verified,yes
+2026-09-04T21:50:25+00:00,Andres Construction,66f51009c33fa10001d78af2,Tom Feather,VP,verified,yes

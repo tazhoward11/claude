@@ -36,19 +36,19 @@ Roers Companies,Roers Companies (pinned to roerscompanies.com),decision_maker,Ra
 Lott Brothers,Lott Brothers (pinned to lottbrothers.com),decision_maker,Barrett Schulz,Vice President,,barretts@lottbrothers.com,verified,firstl,
 Lott Brothers,Lott Brothers (pinned to lottbrothers.com),decision_maker,Joseph Norrell,Chief Financial Officer,,josephn@lottbrothers.com,verified,firstl,
 Legacy MCS,Legacy MCS (pinned to legacymcs.com),decision_maker,Gregory Cole,Director of Construction,,gregory@legacymcs.com,verified,first,
-Legacy MCS,Legacy MCS (pinned to legacymcs.com),decision_maker,Renee Er***t,VP of Admin,,renee@legacymcs.com,predicted (not verified),first,"surname masked but format is first-name-only, applied for free, no credit spent"
-HITT Contracting,HITT Contracting (pinned to hitt.com),decision_maker,Jennifer Ma***s,Vice President and Business Unit Leader,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
-HITT Contracting,HITT Contracting (pinned to hitt.com),decision_maker,Colby Ce***a,Human Resources Business Partner,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
-Rand Construction,Rand Construction (pinned to randcc.com),decision_maker,Ryan Mc***n,Director,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
-Rand Construction,Rand Construction (pinned to randcc.com),decision_maker,Zachary Cl***y,Director of Field Operations,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Legacy MCS,Legacy MCS (pinned to legacymcs.com),decision_maker,Renee Ernst,VP of Admin,,renee@legacydcs.com,verified,first,verified but domain 'legacydcs.com' doesn't match pinned 'legacymcs.com' - excluded from format voting
+HITT Contracting,HITT Contracting (pinned to hitt.com),decision_maker,Jennifer Macks,Vice President and Business Unit Leader,,jmacks@hitt-gc.com,verified,flast,verified but domain 'hitt-gc.com' doesn't match pinned 'hitt.com' - excluded from format voting
+HITT Contracting,HITT Contracting (pinned to hitt.com),decision_maker,Colby Cerelejia,Human Resources Business Partner,,,unavailable,,
+Rand Construction,Rand Construction (pinned to randcc.com),decision_maker,Ryan McGovern,Director,,rmcgovern@randcc.com,verified,flast,
+Rand Construction,Rand Construction (pinned to randcc.com),decision_maker,Zachary Clardy,Director of Field Operations,,clardy@randcc.com,verified,last,
 Rand Construction,Rand Construction (pinned to randcc.com),decision_maker,Matt Da***h,Principal,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
-Gordon Highlander,Gordon Highlander (pinned to gordonhighlander.com),decision_maker,Lee Sa***r,Vice President Business Development,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
-Gordon Highlander,Gordon Highlander (pinned to gordonhighlander.com),decision_maker,Brian Ja***t,Vice President of Business Development,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Gordon Highlander,Gordon Highlander (pinned to gordonhighlander.com),decision_maker,Lee Sawyer,Vice President Business Development,,lsawyer@gordonhighlander.com,verified,flast,
+Gordon Highlander,Gordon Highlander (pinned to gordonhighlander.com),decision_maker,Brian Jarrett,Vice President of Business Development,,bjarrett@gordonhighlander.com,verified,flast,
 Gordon Highlander,Gordon Highlander (pinned to gordonhighlander.com),decision_maker,Pam Do***n,Vice President of Strategic Partner Relationships,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Gordon Highlander,Gordon Highlander (pinned to gordonhighlander.com),decision_maker,Kyle Hu***t,Director of Operations,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Gordon Highlander,Gordon Highlander (pinned to gordonhighlander.com),decision_maker,Stephanie Bo***l,Associate Director of Preconstruction,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Gordon Highlander,Gordon Highlander (pinned to gordonhighlander.com),marketing+decision_maker,Heidi Ma***e,"Project Coordinator, Marketing Director",,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
-Andres Construction,Andres Construction (pinned to andresconstruction.com),decision_maker,Tom Fe***r,VP,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
+Andres Construction,Andres Construction (pinned to andresconstruction.com),decision_maker,Tom Feather,VP,,tom@andresconstruction.com,verified,first,
 Headwater Construction,Headwater Construction (pinned to hw-companies.com),decision_maker,Caren Wi***h,Vice President,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Headwater Construction,Headwater Construction (pinned to hw-companies.com),marketing,Jennifer Fe***s,Marketing Manager,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
 Headwater Construction,Headwater Construction (pinned to hw-companies.com),decision_maker,Anson Wa***g,Director of Construction,,,,,"not enriched (sample budget spent) - last name obfuscated, real email unknown"
